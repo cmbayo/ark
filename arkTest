@@ -1,0 +1,30 @@
+# Usage: type "./arkTest", hit enter, change variables below as needed.
+ 
+#!/bin/bash
+
+compilationOutput="exampleOutput.txt" 
+stringCompare="A false or different case."
+
+diffFiles () {
+	if diff $1 $2; then echo "Outputs seem to be the same."
+	else echo "Outputs are different."
+	fi
+}
+
+diffFileAndString () {
+	if diff $1 <(echo $2); then echo "Outputs seem to be the same."
+        else echo "Outputs are different."
+        fi
+}
+diffTwoStrings() {
+	if diff <(echo $1) <(echo $2); then echo "Outputs seem to be the same."
+        else echo "Outputs are different."
+        fi
+}
+
+diffFiles correctOutput.txt $compilationOutput
+diffFileAndString correctOutput.txt "$stringCompare"
+diffTwoStrings "same" "same"
+diffTwoStrings "not same" "not same at all"
+
+
