@@ -14,4 +14,5 @@ rule tokenize = parse
     | "false" { BOOL_LITERAL(false) }
     | digit+ as value { INT_LITERAL(int_of_string value) }
     | '.' { PERIOD }
+    | "print" { PRINT }
     | eof { EOF }

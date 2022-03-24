@@ -3,6 +3,7 @@
 %token PLUS MINUS TIMES DIVIDE POWER
 %token <int> INT_LITERAL
 %token <bool> BOOL_LITERAL
+%token PRINT
 %token PERIOD
 %token EOF
 
@@ -18,7 +19,8 @@ program:
     stmt EOF { $1 }
 
 stmt:
-    expr PERIOD { $1 }
+    PRINT expr PERIOD { Print $2 }
+    | expr PERIOD { Expr $1 }
 
 expr:
     expr PLUS expr { Binop ($1, Add, $3) }
