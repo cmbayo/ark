@@ -1,6 +1,6 @@
 %{ open Ast %}
 
-%token PLUS MINUS TIMES DIVIDE
+%token PLUS MINUS TIMES DIVIDE POWER
 %token <int> INT_LITERAL
 %token <bool> BOOL_LITERAL
 %token EOF
@@ -9,7 +9,7 @@
 %type <Ast.program> program
 
 %left PLUS MINUS
-%left TIMES DIVIDE
+%left TIMES POWER DIVIDE
 
 %%
 
@@ -21,6 +21,7 @@ expr:
     | expr MINUS expr { Binop ($1, Subtract, $3) }
     | expr TIMES expr { Binop ($1, Multiply, $3) }
     | expr DIVIDE expr { Binop ($1, Divide, $3) }
+    | expr POWER expr { Binop ($1, Power, $3)}
     | literal { $1 }
 
 literal:

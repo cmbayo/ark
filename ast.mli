@@ -1,4 +1,4 @@
-type operator = Add | Subtract | Multiply | Divide
+type operator = Add | Subtract | Multiply | Divide | Power
 
 
 type expr = 
