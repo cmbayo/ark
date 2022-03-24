@@ -7,5 +7,5 @@ let exec (program: Ast.program) =
 
 let _ =
   let lexbuf = Lexing.from_channel stdin in
-  let program = Parser.program_rule Scanner.tokenize lexbuf in
+  let program = Parser.program Scanner.tokenize lexbuf in
   exec program
