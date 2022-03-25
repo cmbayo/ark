@@ -1,10 +1,10 @@
-open Ast
+open Sast
 
 let rec power (base: int) (exponent: int): int =
   if exponent = 0 then 1
   else base * (power base (exponent - 1))
 
-let binop (left: int) (operator: Ast.operator) (right: int): int =
+let int_binop (left: int) (operator: Ast.operator) (right: int): int =
   match operator with
   Add -> left + right
   | Subtract -> left - right
@@ -12,24 +12,35 @@ let binop (left: int) (operator: Ast.operator) (right: int): int =
   | Divide -> left / right
   | Power -> power left right
 
-let rec eval (expr: Ast.expr): int =
-  match expr with
-  | Binop(left, operator, right) -> 
-    let left = eval left in
-    let right = eval right in
-    binop left operator right
-  | IntLiteral(value) -> value 
-  | BoolLiteral(value) -> if value then 1 else 0
+let rec int_eval (sexpr: Sast.sexpr): int =
+  match sexpr with
+  (Int, SBinop(left, operator, right)) -> 
+    let left = int_eval left in
+    let right = int_eval right in
+    int_binop left operator right
+  | (Int, SIntLiteral(value)) -> value
+  | _ -> raise (Failure "Fatal error.")
 
-let rec exec (program: Ast.program) = 
-  match program with
-  | Expr(expr) -> None
-  | Print(expr) -> 
-    let result = eval expr in
-    print_endline (string_of_int result);
-    None
+let rec eval (sexpr: Sast.sexpr) =
+  match sexpr with
+  (Int, _) as int_sexpr -> 
+    let result = int_eval int_sexpr in
+    Printf.printf "%d\n" result; None
+  | (Bool, SBoolLiteral(value)) -> 
+    if value then 
+      let _ = Printf.printf "true\n" in
+      None
+    else 
+      let _ = Printf.printf "false\n" in
+      None
+
+let exec (sprogram: Sast.sprogram) = 
+  match sprogram with
+  SExpr(sexpr) -> None
+  | SPrint(sexpr) -> eval sexpr
 
 let _ =
   let lexbuf = Lexing.from_channel stdin in
   let program = Parser.program Scanner.tokenize lexbuf in
-  exec program
+  let sprogram = Semantics.check program in
+  exec sprogram
