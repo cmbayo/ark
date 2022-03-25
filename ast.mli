@@ -1,3 +1,4 @@
+type typ = Int | Bool
 type operator = Add | Subtract | Multiply | Divide | Power
 
 type expr = 
