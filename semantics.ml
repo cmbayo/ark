@@ -16,6 +16,11 @@ let check (prog: program): sprogram =
       else raise (Failure "Fatal error.") 
     | IntLiteral(x) -> (Int, SIntLiteral x)
     | BoolLiteral(x) -> (Bool, SBoolLiteral x)
+    | Assign(var_type, var, e) -> 
+      let (t, e') = check_expr e in
+      if t = var_type then 
+        (var_type, SAssign(var_type, var, (var_type, e')))
+      else raise (Failure "Fatal error.")
   in
 
   match prog with

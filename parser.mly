@@ -1,8 +1,11 @@
 %{ open Ast %}
 
 %token PLUS MINUS TIMES DIVIDE POWER
+%token INT BOOL
+%token EQUAL
 %token <int> INT_LITERAL
 %token <bool> BOOL_LITERAL
+%token <string> ID
 %token PRINT
 %token PERIOD
 %token EOF
@@ -29,6 +32,11 @@ expr:
     | expr DIVIDE expr { Binop ($1, Divide, $3) }
     | expr POWER expr { Binop ($1, Power, $3)}
     | literal { $1 }
+    | typ ID EQUAL expr { Assign($1, $2, $4) }
+
+typ:
+    INT { Int } | 
+    BOOL { Bool }
 
 literal:
     INT_LITERAL { IntLiteral $1 }

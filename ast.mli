@@ -5,6 +5,7 @@ type expr =
     | Binop of expr * operator * expr
     | IntLiteral of int
     | BoolLiteral of bool
+    | Assign of typ * string * expr
 
 type stmt =
     | Print of expr

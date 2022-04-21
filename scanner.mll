@@ -10,9 +10,13 @@ rule tokenize = parse
     | '*' { TIMES }
     | '/' { DIVIDE }
     | "**" { POWER }
+    | "int" { INT }
+    | "bool" { BOOL }
+    | "=" { EQUAL }
     | "true" { BOOL_LITERAL(true) }
     | "false" { BOOL_LITERAL(false) }
-    | digit+ as value { INT_LITERAL(int_of_string value) }
-    | '.' { PERIOD }
     | "print" { PRINT }
+    | digit+ as value { INT_LITERAL(int_of_string value) }
+    | letter (digit | letter | '_')* as lem { ID(lem) }
+    | '.' { PERIOD }
     | eof { EOF }
