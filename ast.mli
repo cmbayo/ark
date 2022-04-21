@@ -10,5 +10,7 @@ type expr =
 type stmt =
     | Print of expr
     | Expr of expr
+    | Block of stmt
+    | If of expr * stmt * stmt
 
 type program = stmt

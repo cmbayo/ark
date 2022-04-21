@@ -23,6 +23,15 @@ let check (prog: program): sprogram =
       else raise (Failure "Fatal error.")
   in
 
-  match prog with
-  Expr(ex) -> SExpr(check_expr ex)
-  | Print(ex) -> SPrint(check_expr ex)
+  let rec check_stmt(st: stmt): sstmt = 
+    match st with
+    Expr(ex) -> SExpr(check_expr ex)
+    | Print(ex) -> SPrint(check_expr ex)
+    | Block(s) -> SBlock(check_stmt s)
+    | If(e, s1, s2) -> 
+      let (t, e') = check_expr e in
+      (match t with
+      bool -> SIf(check_expr e, check_stmt s1, check_stmt s2))
+  in
+
+  check_stmt(prog)

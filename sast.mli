@@ -10,5 +10,8 @@ and sx =
 type sstmt =
     | SPrint of sexpr
     | SExpr of sexpr
+    | SBlock of sstmt
+    | SIf of sexpr * sstmt * sstmt
+
 
 type sprogram = sstmt

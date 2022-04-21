@@ -16,6 +16,12 @@ rule tokenize = parse
     | "true" { BOOL_LITERAL(true) }
     | "false" { BOOL_LITERAL(false) }
     | "print" { PRINT }
+    | "if" { IF }
+    | "else" { ELSE }
+    | "(" { LPAREN }
+    | ")" { RPAREN }
+    | "{" { LBRACE }
+    | "}" { RBRACE }
     | digit+ as value { INT_LITERAL(int_of_string value) }
     | letter (digit | letter | '_')* as lem { ID(lem) }
     | '.' { PERIOD }

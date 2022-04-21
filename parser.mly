@@ -7,6 +7,9 @@
 %token <bool> BOOL_LITERAL
 %token <string> ID
 %token PRINT
+%token IF ELSE
+%token LPAREN RPAREN
+%token LBRACE RBRACE
 %token PERIOD
 %token EOF
 
@@ -24,6 +27,8 @@ program:
 stmt:
     PRINT expr PERIOD { Print $2 }
     | expr PERIOD { Expr $1 }
+    | LBRACE stmt RBRACE { Block $2 }
+    | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
 
 expr:
     expr PLUS expr { Binop ($1, Add, $3) }
