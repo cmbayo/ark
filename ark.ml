@@ -19,6 +19,17 @@ let rec int_eval (sexpr: Sast.sexpr): int =
     let right = int_eval right in
     int_binop left operator right
   | (Int, SIntLiteral(value)) -> value
+  | (Int, SAssign(var_type, var, s)) -> 
+    let result = int_eval s in
+    result
+  | _ -> raise (Failure "Fatal error.")
+
+let rec bool_eval (sexpr: Sast.sexpr): bool =
+  match sexpr with
+  (Bool, SBoolLiteral(value)) -> value
+  | (Bool, SAssign(var_type, var, s)) ->
+    let result = bool_eval s in
+    result
   | _ -> raise (Failure "Fatal error.")
 
 let rec eval (sexpr: Sast.sexpr) =
@@ -26,13 +37,14 @@ let rec eval (sexpr: Sast.sexpr) =
   (Int, _) as int_sexpr -> 
     let result = int_eval int_sexpr in
     Printf.printf "%d\n" result; None
-  | (Bool, SBoolLiteral(value)) -> 
-    if value then 
+  | (Bool, _) as bool_sexpr ->
+    let result = bool_eval bool_sexpr in
+    if result then 
       let _ = Printf.printf "true\n" in
       None
     else 
       let _ = Printf.printf "false\n" in
-      None
+      None 
 
 let exec (sprogram: Sast.sprogram) = 
   match sprogram with
