@@ -26,6 +26,12 @@ let translate(globals, functions) =
             in StringMap.add n (L.define_global n init the_module) m in
         List.fold_left global_var StringMap.empty globals in
     
+        let printf_t : L.lltype =
+            L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
+        let printf_func : L.llvalue =
+            L.declare_function "printf" printf_t the_module in
+
+    
     let rec build_expr builder((_,e): sexpr) = match e with
         SIntLiteral i -> L.const_int i32_t i
         | SBoolLiteral b -> L.const_int i1_t (if b then 1 else 0)
