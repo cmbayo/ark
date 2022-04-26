@@ -5,6 +5,10 @@
 compilationOutput="exampleOutput.txt" 
 stringCompare="A false or different case."
 
+# diffFiles correctOutput.txt $compilationOutput
+# diffFileAndString correctOutput.txt "$stringCompare"
+# diffTwoStrings "same" "same"
+# diffTwoStrings "not same" "not same at all"
 diffFiles () {
 	if diff $1 $2; then echo "Outputs seem to be the same."
 	else echo "Outputs are different."
@@ -21,10 +25,15 @@ diffTwoStrings() {
         else echo "Outputs are different."
         fi
 }
+test(){
+	echo "testing \"${1}\" ==> ${2}"
+	echo $1 > input.txt
+	./ark.native < input.txt > ark.out
+	diffFileAndString ark.out $2
+}
 
-diffFiles correctOutput.txt $compilationOutput
-diffFileAndString correctOutput.txt "$stringCompare"
-diffTwoStrings "same" "same"
-diffTwoStrings "not same" "not same at all"
+test "print 9-8." "1"
+test "print 7*6." "42"
+test "print 2+2." "4"
 
 
