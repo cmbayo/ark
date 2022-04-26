@@ -1,4 +1,4 @@
-open Sast
+(* open Sast
 
 let rec power (base: int) (exponent: int): int =
   if exponent = 0 then 1
@@ -49,10 +49,10 @@ let rec eval (sexpr: Sast.sexpr) =
 let exec (sprogram: Sast.sprogram) = 
   match sprogram with
   SExpr(sexpr) -> None
-  | SPrint(sexpr) -> eval sexpr
+  | SPrint(sexpr) -> eval sexpr *)
 
 let _ =
   let lexbuf = Lexing.from_channel stdin in
   let program = Parser.program Scanner.tokenize lexbuf in
   let sprogram = Semantics.check program in
-  exec sprogram
+  Irgen2.translate(sprogram)

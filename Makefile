@@ -1,5 +1,5 @@
 ark: 
-	ocamlbuild ark.native && ./ark.native
+	ocamlbuild -pkgs llvm ark.native && ./ark.native
 
 .PHONY : clean
 clean :
