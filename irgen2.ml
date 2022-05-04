@@ -9,6 +9,7 @@ let translate(sprogram: Sast.sprogram) =
   let ark_module = L.create_module context "Ark" in
 
   let i32_t = L.i32_type context
+  and i8_t       = L.i8_type     context
   and i1_t = L.i1_type context in
 
   let ltype_of_typ = function
@@ -19,7 +20,7 @@ let translate(sprogram: Sast.sprogram) =
   let printf_t : L.lltype =
     L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
   let printf_func : L.llvalue =
-      L.declare_function "printf" printf_t the_module in
+      L.declare_function "printf" printf_t ark_module in
 
   let builder = L.builder_at_end context (L.entry_block "test") in
   let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder in
