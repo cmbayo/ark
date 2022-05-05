@@ -1,6 +1,8 @@
 open Ast
 open Sast
 
+module StringMap = Map.Make(String)
+
 let check (prog: program): sprogram =
   let rec check_expr(ex: expr): sexpr =
     match ex with
