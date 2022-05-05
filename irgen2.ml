@@ -5,13 +5,13 @@ open Sast
 module StringMap = Map.Make(String)
 
 (*Translate: change the sast program to an LLVM module*)
-let translate(sprogram: Sast.sprogram) = 
+let translate(prog: program): sprogram = 
   let context = L.global_context () in
   let ark_module = L.create_module context "Ark" in
 
-  let i32_t = L.i32_type context
-  and i8_t       = L.i8_type     context
-  and i1_t = L.i1_type context in
+  let i32_t       = L.i32_type context
+  and i8_t        = L.i8_type     context
+  and i1_t        = L.i1_type context in
 
   let ltype_of_typ = function
     A.Int -> i32_t
@@ -23,7 +23,10 @@ let translate(sprogram: Sast.sprogram) =
   let printf_func : L.llvalue =
       L.declare_function "printf" printf_t ark_module in
 
-  let builder = L.builder_at_end context (L.entry_block "test") in
+      
+  let build_function_body fdecl = 
+  let (the_function, _) = StringMap.find fdecl.sfname function_decls in
+  let builder = L.builder_at_end context (L.entry_block the_function ) in
   let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder in
 
   let rec build_expr (builder, sexpr: Sast.sexpr) =
@@ -40,7 +43,5 @@ let translate(sprogram: Sast.sprogram) =
       ); builder
   in
 
-  build_stmt builder sprogram;
+  List.iter build_function_body sprogram;
   ark_module
-
-  
