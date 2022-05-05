@@ -11,6 +11,7 @@ rule tokenize = parse
     | '/' { DIVIDE }
     | "**" { POWER }
     | "int" { INT }
+    | "while" { WHILE }
     | "bool" { BOOL }
     | "=" { EQUAL }
     | "true" { BOOL_LITERAL(true) }

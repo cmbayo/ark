@@ -3,4 +3,4 @@ ark:
 
 .PHONY : clean
 clean :
-	rm -rf *.cmi *.cmo parser.ml parser.mli scanner.ml ark.out ark
+	rm -rf *.cmi *.cmo parser.ml parser.mli scanner.ml ark.out ark _build

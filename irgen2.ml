@@ -4,6 +4,7 @@ open Sast
 
 module StringMap = Map.Make(String)
 
+(*Translate: change the sast program to an LLVM module*)
 let translate(sprogram: Sast.sprogram) = 
   let context = L.global_context () in
   let ark_module = L.create_module context "Ark" in
