@@ -22,7 +22,9 @@ rule tokenize = parse
     | ")" { RPAREN }
     | "{" { LBRACE }
     | "}" { RBRACE }
+    | "return" {RETURN}
     | digit+ as value { INT_LITERAL(int_of_string value) }
     | letter (digit | letter | '_')* as lem { ID(lem) }
     | '.' { PERIOD }
     | eof { EOF }
+    | _ as char{raise(Failure( "illegal character " ^ Char.escaped char))}

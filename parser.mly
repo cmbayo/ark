@@ -11,6 +11,7 @@
 %token LPAREN RPAREN
 %token LBRACE RBRACE
 %token PERIOD
+%token RETURN COMMA
 %token EOF
 
 %start program

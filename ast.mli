@@ -6,7 +6,7 @@ type expr =
     | IntLiteral of int
     | BoolLiteral of bool
     | Assign of typ * string * expr
-
+    | Call of string * expr list
 type stmt =
     | Print of expr
     | Expr of expr
