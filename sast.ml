@@ -8,7 +8,7 @@ and sx =
     | SAssign of typ * string * sexpr
 
 type sstmt =
-    | SPrint of sexpr
+    SPrint of sexpr
     | SExpr of sexpr
     | SBlock of sstmt
     | SIf of sexpr * sstmt * sstmt

@@ -88,8 +88,7 @@ let translate (globals,functions) =
            | A.Less    -> L.build_icmp L.Icmp.Slt
           ) e1' e2' "tmp" builder
         | SCall ("print", [e]) ->
-          L.build_call printf_func [| int_format_str ; (build_expr builder e) |]
-            "printf" builder
+          L.build_call printf_func [| int_format_str ; (build_expr builder e) |] "printf" builder
         | SCall (f, args) ->
           let (fdef, fdecl) = StringMap.find f function_decls in
           let llargs = List.rev (List.map (build_expr builder) (List.rev args)) in

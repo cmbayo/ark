@@ -22,26 +22,28 @@ let translate(sprogram: Sast.sprogram) =
     L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
   let printf_func : L.llvalue =
       L.declare_function "printf" printf_t ark_module in
-  
-  let build_function_body fdecl =
-        let (the_function, _) = StringMap.find fdecl.sfname function_decls in
 
-  let builder = L.builder_at_end context (L.entry_block the_function) in
+  let builder = L.builder context in
   let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder in
 
   let rec build_expr (builder, sexpr: Sast.sexpr) =
     match sexpr with
-    SIntLiteral i -> L.const_int i32_t i1_t
-    | SBoolLit b -> L.const_int i1_t (if b then 1 else 0)
+    SIntLiteral i -> L.const_int i32_t i
+    | SBoolLiteral b -> L.const_int i1_t (if b then 1 else 0)
   in
 
-  let rec build_stmt (builder, sstmt: Sast.sstmt) =
+
+  let rec build_stmt (builder, sstmt) =
     match sstmt with
-    SExpr(sexpr) -> None (* TODO: This is only temporary *)
-    | SPrint(sexpr) ->  ignore(
-      L.build_call printf_func  [| int_format_str ; (build_expr builder sexpr) |]
-      ); builder
+    SExpr(sexpr) -> builder (* TODO: This is only temporary *)
+    | SPrint(sexpr) ->  
+      L.build_call printf_func [| int_format_str ; (build_expr (builder sexpr) |] "printf" builder
   in
 
   build_stmt builder sprogram;
   ark_module
+
+
+  (* ignore(
+      L.build_call printf_func  [| int_format_str ; (build_expr builder sexpr) |]
+      ); builder *)
