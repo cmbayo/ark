@@ -103,7 +103,8 @@ let translate (globals,functions) =
           match L.block_terminator (L.insertion_block builder) with
             Some _ -> ()
           | None -> ignore (instr builder) in
-
+      
+      (*-------------------build_stmt for function----------------------------------------------------------*)
       let rec build_stmt builder = function
           SBlock sl -> List.fold_left build_stmt builder sl
         | SExpr e -> ignore(build_expr builder e); builder
@@ -190,7 +191,9 @@ let translate (globals,functions) =
 
         in
         let func_builder = build_stmt builder (SBlock fdecl.sbody) in
-
+        (* Given the current builder, and turn function body into a Block statement
+           Pass in build_stmt to generate IR code for this function body*)
+        (* If the generated IR code doesn't have a terminal, we add a return 0 at the end of the function *)
         add_terminal func_builder (L.build_ret (L.const_int i32_t 0))
   in
 
