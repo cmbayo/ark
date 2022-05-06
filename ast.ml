@@ -1,12 +1,12 @@
 type typ = Int | Bool
-type operator = Add | Subtract | Multiply | Divide | Power
+type operator = Add | Subtract | Multiply | Divide | Power| Equal | Neq | Less | And | Or
 
 type expr = 
-    | Binop of expr * operator * expr
+      Binop of expr * operator * expr
     | IntLiteral of int
     | BoolLiteral of bool
     | Id of string
-    | Assign of typ * string * expr
+    | Assign of string * expr
     | Call of string * expr list
 type stmt =
     | Print of expr

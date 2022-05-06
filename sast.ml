@@ -6,16 +6,16 @@ and sx =
     | SIntLiteral of int
     | SBoolLiteral of bool
     | SId of string
-    | SAssign of typ * string * sexpr
+    | SAssign of string * sexpr
     | SCall of string * sexpr list
 
 type sstmt =
-    | SPrint of sexpr
+      SPrint of sexpr
     | SExpr of sexpr
     | SBlock of sstmt list
     | SIf of sexpr * sstmt * sstmt
     | SWhile of sexpr * sstmt
-    | SREturn of sexpr
+    | SReturn of sexpr
 
 type sfunc_dec = {
     srtyp: typ;
