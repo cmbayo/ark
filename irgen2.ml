@@ -66,6 +66,7 @@ let translate (globals,functions) =
         with Not_found -> StringMap.find n global_vars
       in
 
+      (* build_expr function generates E.code, and returns E.addr *)
       let rec build_expr builder ((_, e) : sexpr) = match e with
           SIntLiteral i -> L.const_int i32_t i
         | SBoolLiteral b -> L.const_int i1_t (if b then 1 else 0)
@@ -97,6 +98,8 @@ let translate (globals,functions) =
       in
 
       let add_terminal builder instr =
+          (* When there is a "jump, or return" inside the builder(L.block_terminator), we do nothing, If it doesn't
+             have a terminator, we are going to insert the instr at the position specified by this builder*)
           match L.block_terminator (L.insertion_block builder) with
             Some _ -> ()
           | None -> ignore (instr builder) in
@@ -108,23 +111,70 @@ let translate (globals,functions) =
         | SIf (predicate, then_stmt, else_stmt) ->
           let bool_val = build_expr builder predicate in
 
+          (* Then basic block*)
           let then_bb = L.append_block context "then" the_function in
-          ignore (build_stmt (L.builder_at_end context then_bb) then_stmt);
+          ignore (build_stmt (L.builder_at_end context then_bb) then_stmt); (* this is inserting a then_builder inside the then block*)
+
+
+          (* Else basic block*)
           let else_bb = L.append_block context "else" the_function in
           ignore (build_stmt (L.builder_at_end context else_bb) else_stmt);
 
+
+
+          (* End block: after executing the then branch and else branch, you should jump to the end*)
           let end_bb = L.append_block context "if_end" the_function in
           let build_br_end = L.build_br end_bb in (* partial function *)
+          (*
+          {then:
+             then_stmt.code
+             br end 
+          }   
+          {
+          else:
+            else_stmt.code
+            br end
+          }
+          *)
           add_terminal (L.builder_at_end context then_bb) build_br_end;
           add_terminal (L.builder_at_end context else_bb) build_br_end;
-
+          (*codnditional branch: if bool_val is true, jump to then block, else, jump to else block.*)
           ignore(L.build_cond_br bool_val then_bb else_bb builder);
-          L.builder_at_end context end_bb
+          L.builder_at_end context end_bb (* Only returns the last expression. The end of the block builder*)
 
         | SWhile (predicate, body) ->
-            let while_bb = L.append_block context "while" the_function in
+          (*
+              Insert a while block, label it with "while". The builder will be pointing before while
+
+              br while
+              <---- builder
+              [
+                while:
+
+
+              ]
+          *)
+            let while_bb = L.append_block context "while" the_function in (* Generate a while block*)
+            (* unconditional jump to the while block. We didn't pass a builder here*)
             let build_br_while = L.build_br while_bb in (* partial function *)
             ignore (build_br_while builder);
+            
+            (* generate code for the while loop*)
+            (*[
+                while:
+                  predicate.code
+                  bool_val = predicate.addr
+                  cond_br bool_val while_body end
+                  <---- while_builder
+              ]
+              if bool_val is true, we go to one block, else, we go to the end block, so we need two more blocks.
+              [
+                  while_body:
+                    body.code
+                    br while
+              ]
+
+              *)
             let while_builder = L.builder_at_end context while_bb in
             let bool_val = build_expr while_builder predicate in
 
@@ -132,7 +182,10 @@ let translate (globals,functions) =
             add_terminal (build_stmt (L.builder_at_end context body_bb) body) build_br_while;
 
             let end_bb = L.append_block context "while_end" the_function in
-            ignore(L.build_cond_br bool_val body_bb end_bb while_builder);
+
+
+            ignore(L.build_cond_br bool_val body_bb end_bb while_builder); (* if bool_val is true, we jump to body_bb, otherwise we jump to end.*)
+
             L.builder_at_end context end_bb
 
         in
