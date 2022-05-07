@@ -4,7 +4,6 @@ open Sast
 
 module StringMap = Map.Make(String)
 
-(*Translate: change the sast program to an LLVM module*)
 let translate(sprogram: Sast.sprogram) = 
   let context = L.global_context () in
   let ark_module = L.create_module context "Ark" in
@@ -23,7 +22,8 @@ let translate(sprogram: Sast.sprogram) =
   let printf_func : L.llvalue =
       L.declare_function "printf" printf_t ark_module in
 
-      let builder = L.builder_at_end context (L.entry_block printf_func) in
+      
+  let builder = L.builder context in
   let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder in
 
   let build_expr builder ((_, e) : sexpr) =
