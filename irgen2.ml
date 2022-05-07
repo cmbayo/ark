@@ -23,27 +23,20 @@ let translate(sprogram: Sast.sprogram) =
   let printf_func : L.llvalue =
       L.declare_function "printf" printf_t ark_module in
 
-  let builder = L.builder context in
+      let builder = L.builder_at_end context (L.entry_block printf_func) in
   let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder in
 
-  let rec build_expr (builder, sexpr: Sast.sexpr) =
-    match sexpr with
+  let build_expr builder ((_, e) : sexpr) =
+    match e with
     SIntLiteral i -> L.const_int i32_t i
     | SBoolLiteral b -> L.const_int i1_t (if b then 1 else 0)
   in
-
-
-  let rec build_stmt (builder, sstmt) =
-    match sstmt with
-    SExpr(sexpr) -> builder (* TODO: This is only temporary *)
-    | SPrint(sexpr) ->  
-      L.build_call printf_func [| int_format_str ; (build_expr (builder sexpr) |] "printf" builder
+  let build_stmt builder  = function
+    SExpr e -> ignore(build_expr builder e); builder (* TODO: This is only temporary *)
+    | SPrint(e) ->  ignore(
+      L.build_call printf_func  [| int_format_str ; (build_expr builder e) |] "printf" builder
+      ); builder
   in
 
   build_stmt builder sprogram;
   ark_module
-
-
-  (* ignore(
-      L.build_call printf_func  [| int_format_str ; (build_expr builder sexpr) |]
-      ); builder *)
