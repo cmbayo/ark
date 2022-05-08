@@ -25,4 +25,10 @@ rule tokenize = parse
     | letter (digit | letter | '_')* as lem { ID(lem) }
     | '.' { PERIOD }
     | ',' {COMMA}
+    | ':' {COLON}
+    | "def" { DEF }
+    | "input" { INPUT }
+    | "output" { OUTPUT }
+    | "return" { RETURN }
+    | eof { EOF }
     | eof { EOF }

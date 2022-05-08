@@ -10,6 +10,7 @@
 %token LPAREN RPAREN
 %token LBRACE RBRACE
 %token PERIOD COMMA
+%token RETURN DEF INPUT OUTPUT COLON
 %token EOF
 
 %start program
