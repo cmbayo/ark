@@ -16,8 +16,8 @@ diffFiles () {
 }
 
 diffFileAndString () {
-	if diff $1 <(echo $2); then echo "Outputs seem to be the same."
-        else echo "Outputs are different."
+	if diff $1 <(echo "${2}"); then echo "${3}...Okay!"
+        else echo "${3}...Bad"
         fi
 }
 diffTwoStrings() {
@@ -26,14 +26,24 @@ diffTwoStrings() {
         fi
 }
 test(){
-	echo "testing \"${1}\" ==> ${2}"
-	echo $1 > input.txt
-	./ark.native < input.txt > ark.out
-	diffFileAndString ark.out $2
+	echo "main {} -> int: ${1} ..." > input.txt
+	./ark.native < input.txt > codegen && /usr/local/opt/llvm/bin/lli codegen > ark.out
+	diffFileAndString ark.out "${2}" "\"${1}\" ==> ${2} "
 }
 
-test "print 9-8." "1"
-test "print 7*6." "42"
-test "print 2+2." "4"
-
-
+test "print (9-8)." "1"
+test "print (7*6)." "42"
+test "print (2+2)." "4"
+test "print (4**3)." "64"
+test "print (4/2)." "2"
+test "print (4-2*2)." "0"
+test "print (10-7/2*3+1)." "2"
+test "print (5-100)." "-95"
+test "print (10*2-30)." "-10"
+test "print (2**2-1)." "3"
+test "print (3/0)." ""
+test "print (2-1)." "1"
+test "bool b. b = true. if(b): print(5). ..." "5"
+test "int a. a = 5. a = a - 2. print(a)." "3"
+#test "int a = 5. print(a)." "5"
+test "str a. a = \"tron appears\". printstring(a)." "tron appears"
