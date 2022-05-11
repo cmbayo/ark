@@ -22,11 +22,11 @@ ocamlbuild -r -package llvm ark.native && \
  ./arkTest
 ```
 ### Current working parts of the language
-The compiler understands basic math (+, -, /, *)
+The compiler understands basic math (+, -, /, *). 
 Compiler also takes variable assignments for ints, bools and strings.
-Compiler can print ints and strings separately
-If and else statements work.
-Currently works using main function. variables MUST be declared first.
+Compiler can print ints and strings separately. 
+If and else statements work. 
+Currently works using main function. variables MUST be declared first. 
 Example of working code:
 ```
 main{} -> int:
@@ -35,7 +35,7 @@ main{} -> int:
 	str c.
 	a = 2*3.
 	b = true.
-	c = "hello there!"
+	c = "hello there!".
 	if (b):
 		print(5).
 		printstring(c).
