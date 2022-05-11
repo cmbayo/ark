@@ -25,8 +25,9 @@ rule tokenize = parse
     | letter (digit | letter | '_')* as lem { ID(lem) }
     | "..." { ELLIPSIS }
     | '.' { PERIOD }
-    | ',' {COMMA}
-    | ':' {COLON}
+    | ',' { COMMA }
+    | ':' { COLON }
+    | "->" { ARROW }
     | "def" { DEF }
     | "input" { INPUT }
     | "output" { OUTPUT }

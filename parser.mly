@@ -8,7 +8,7 @@
 %token <string> ID
 %token IF ELSE
 %token LBRACE RBRACE LPAREN RPAREN
-%token COLON ELLIPSIS
+%token ARROW COLON ELLIPSIS
 %token PERIOD COMMA
 %token RETURN DEF INPUT OUTPUT
 %token EOF
@@ -44,14 +44,14 @@ typ:
 
 /* fdecl */
 fdecl:
-  ID LBRACE formals_opt RBRACE typ COLON vdecl_list stmt_list ELLIPSIS
+  ID LBRACE formals_opt RBRACE ARROW typ COLON vdecl_list stmt_list ELLIPSIS
   {
     {
-      rtyp=$5;
+      rtyp=$6;
       fname=$1;
       formals=$3;
-      locals=$7;
-      body=$8
+      locals=$8;
+      body=$9
     }
   }
 
