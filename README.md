@@ -22,7 +22,6 @@ ocamlbuild -r -package llvm ark.native && \
  ./arkTest
 ```
 ### Current working parts of the language
-```
 The compiler understands basic math (+, -, /, *)
 Compiler also takes variable assignments for ints, bools and strings.
 Compiler can print ints and strings separately
