@@ -7,8 +7,8 @@
 %token <bool> BOOL_LITERAL
 %token <string> ID
 %token IF ELSE
-%token LPAREN RPAREN
-%token LBRACE RBRACE COLON ELLIPSIS
+%token LBRACE RBRACE LPAREN RPAREN
+%token COLON ELLIPSIS
 %token PERIOD COMMA
 %token RETURN DEF INPUT OUTPUT
 %token EOF
@@ -70,7 +70,7 @@ stmt_list:
 
 stmt:
     expr PERIOD { Expr $1 }
-  | LBRACE stmt_list RBRACE { Block $2 }
+  | COLON stmt_list ELLIPSIS { Block $2 }
 
 expr:
     INT_LITERAL { IntLiteral $1 }
