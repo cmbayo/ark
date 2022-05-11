@@ -15,7 +15,6 @@ rule tokenize = parse
     | "=" { EQUAL }
     | "true" { BOOL_LITERAL(true) }
     | "false" { BOOL_LITERAL(false) }
-    | "print" { PRINT }
     | "if" { IF }
     | "else" { ELSE }
     | "(" { LPAREN }
@@ -24,5 +23,14 @@ rule tokenize = parse
     | "}" { RBRACE }
     | digit+ as value { INT_LITERAL(int_of_string value) }
     | letter (digit | letter | '_')* as lem { ID(lem) }
+    | "..." { ELLIPSIS }
     | '.' { PERIOD }
+    | ',' { COMMA }
+    | ':' { COLON }
+    | "->" { ARROW }
+    | "def" { DEF }
+    | "input" { INPUT }
+    | "output" { OUTPUT }
+    | "return" { RETURN }
+    | eof { EOF }
     | eof { EOF }
