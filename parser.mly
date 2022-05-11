@@ -71,6 +71,7 @@ stmt_list:
 stmt:
     expr PERIOD { Expr $1 }
   | IF LPAREN expr RPAREN COLON stmt_list ELLIPSIS ELSE COLON stmt_list ELLIPSIS { If($3, $6, $10) }
+  | IF LPAREN expr RPAREN COLON stmt_list ELLIPSIS { If($3, $6, []) }
   | COLON stmt_list ELLIPSIS { Block $2 }
 
 expr:
