@@ -75,6 +75,16 @@ let translate (globals, functions) =
         let llargs = List.rev (List.map (build_expr builder) (List.rev args)) in
         let result = f ^ "_result" in
         L.build_call fdef (Array.of_list llargs) result builder
+      | SBinop (e1, op, e2) -> 
+        let e1' = build_expr builder e1
+        and e2' = build_expr builder e2 in
+        (match op with
+           A.Add     -> L.build_add
+         | A.Subtract -> L.build_sub
+         | A.Multiply -> L.build_mul
+         | A.Divide -> L.build_sdiv
+         | A.Power -> L.build_mul (* TODO: THIS IS A PLACEHOLDER *)
+        ) e1' e2' "tmp" builder
     in
 
     let add_terminal builder instr =

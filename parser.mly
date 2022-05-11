@@ -39,8 +39,8 @@ vdecl:
   typ ID { ($1, $2) }
 
 typ:
-    INT   { Int   }
-  | BOOL  { Bool  }
+    INT   { Int }
+  | BOOL  { Bool }
 
 /* fdecl */
 fdecl:
