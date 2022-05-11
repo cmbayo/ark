@@ -16,6 +16,7 @@ type stmt =
     Block of stmt list
   | Expr of expr
   | If of expr * stmt list * stmt list
+  | While of expr * stmt list
   | Return of expr
 
   (* int x: name binding *)

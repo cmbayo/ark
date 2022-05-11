@@ -26,6 +26,7 @@ rule tokenize = parse
     | "false" { BOOL_LITERAL(false) }
     | "if" { IF }
     | "else" { ELSE }
+    | "while" { WHILE }
     | "(" { LPAREN }
     | ")" { RPAREN }
     | "{" { LBRACE }

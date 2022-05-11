@@ -129,6 +129,30 @@ let translate (globals, functions) =
 
         ignore(L.build_cond_br bool_val then_bb else_bb builder);
         L.builder_at_end context end_bb
+      | SWhile (predicate, loop_body) ->
+        let rec build_block(block, bb) =
+          (match block with
+            [] -> None
+            | stmt :: tail -> 
+              ignore(build_stmt (L.builder_at_end context bb) stmt);
+              build_block(tail, bb))
+        in
+
+        let while_bb = L.append_block context "while" the_function in
+        let build_br_while = L.build_br while_bb in (* partial function *)
+        ignore (build_br_while builder);
+        let while_builder = L.builder_at_end context while_bb in
+        let bool_val = build_expr while_builder predicate in
+
+        let body_bb = L.append_block context "while_body" the_function in
+        build_block(loop_body, body_bb);
+        add_terminal (L.builder_at_end context body_bb) build_br_while;
+
+        let end_bb = L.append_block context "while_end" the_function in
+
+        ignore(L.build_cond_br bool_val body_bb end_bb while_builder);
+        L.builder_at_end context end_bb
+
 
     in
 

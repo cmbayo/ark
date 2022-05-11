@@ -7,7 +7,7 @@
 %token <bool> BOOL_LITERAL
 %token <string> ID STRING_LITERAL
 %token <string> ID
-%token IF ELSE
+%token IF ELSE WHILE
 %token LBRACE RBRACE LPAREN RPAREN
 %token ARROW COLON ELLIPSIS
 %token PERIOD COMMA
@@ -76,6 +76,7 @@ stmt:
     expr PERIOD { Expr $1 }
   | IF LPAREN expr RPAREN COLON stmt_list ELLIPSIS ELSE COLON stmt_list ELLIPSIS { If($3, $6, $10) }
   | IF LPAREN expr RPAREN COLON stmt_list ELLIPSIS { If($3, $6, []) }
+  | WHILE LPAREN expr RPAREN COLON stmt_list ELLIPSIS { While($3, $6) }
   | COLON stmt_list ELLIPSIS { Block $2 }
   | RETURN expr PERIOD {Return $2}
 
