@@ -23,6 +23,7 @@ rule tokenize = parse
     | "}" { RBRACE }
     | digit+ as value { INT_LITERAL(int_of_string value) }
     | letter (digit | letter | '_')* as lem { ID(lem) }
+    | "..." { ELLIPSIS }
     | '.' { PERIOD }
     | ',' {COMMA}
     | ':' {COLON}

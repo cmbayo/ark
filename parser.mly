@@ -8,9 +8,9 @@
 %token <string> ID
 %token IF ELSE
 %token LPAREN RPAREN
-%token LBRACE RBRACE
+%token LBRACE RBRACE COLON ELLIPSIS
 %token PERIOD COMMA
-%token RETURN DEF INPUT OUTPUT COLON
+%token RETURN DEF INPUT OUTPUT
 %token EOF
 
 %start program
@@ -26,7 +26,7 @@ program:
   decls EOF { $1}
 
 decls:
-   /* nothing */ { ([], [])               }
+   /* nothing */ { ([], []) }
  | vdecl PERIOD decls { (($1 :: fst $3), snd $3) }
  | fdecl decls { (fst $2, ($1 :: snd $2)) }
 
@@ -44,14 +44,14 @@ typ:
 
 /* fdecl */
 fdecl:
-  vdecl LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+  ID LBRACE formals_opt RBRACE typ COLON vdecl_list stmt_list ELLIPSIS
   {
     {
-      rtyp=fst $1;
-      fname=snd $1;
+      rtyp=$5;
+      fname=$1;
       formals=$3;
-      locals=$6;
-      body=$7
+      locals=$7;
+      body=$8
     }
   }
 
@@ -69,8 +69,8 @@ stmt_list:
   | stmt stmt_list  { $1::$2 }
 
 stmt:
-    expr PERIOD                               { Expr $1      }
-  | LBRACE stmt_list RBRACE                 { Block $2 }
+    expr PERIOD { Expr $1 }
+  | LBRACE stmt_list RBRACE { Block $2 }
 
 expr:
     INT_LITERAL { IntLiteral $1 }
