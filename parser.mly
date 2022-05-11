@@ -1,10 +1,11 @@
 %{ open Ast %}
 
 %token PLUS MINUS TIMES DIVIDE POWER ASSIGN
-%token INT BOOL
+%token INT BOOL STRING
 %token EQUAL
 %token <int> INT_LITERAL
 %token <bool> BOOL_LITERAL
+%token <string> ID STRING_LITERAL
 %token <string> ID
 %token IF ELSE
 %token LBRACE RBRACE LPAREN RPAREN
@@ -42,6 +43,7 @@ vdecl:
 typ:
   INT   { Int }
   | BOOL  { Bool }
+  | STRING { String }
   
 
 /* fdecl */
@@ -80,6 +82,7 @@ stmt:
 expr:
     INT_LITERAL { IntLiteral $1 }
   | BOOL_LITERAL { BoolLiteral $1 }
+  | STRING_LITERAL { StringLiteral $1 }
   | ID            {Id ($1)}
   | expr PLUS   expr { Binop($1, Add,   $3)   }
   | expr MINUS  expr { Binop($1, Subtract,   $3)   }

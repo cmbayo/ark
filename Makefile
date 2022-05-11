@@ -5,7 +5,7 @@ ark:
 	./ark.native > codegen
 
 run:
-	/usr/local/opt/llvm/bin/lli codegen
+	lli codegen
 
 .PHONY : clean
 clean :

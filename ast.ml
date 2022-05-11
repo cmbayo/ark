@@ -1,4 +1,4 @@
-type typ = Int | Bool
+type typ = Int | Bool | String
 type operator = Add | Subtract | Multiply | Divide | Power  
 
 
@@ -7,6 +7,7 @@ type expr =
   | Binop of expr * operator * expr
   | IntLiteral of int
   | BoolLiteral of bool
+  | StringLiteral of string
   | Id of string
   | Assign of string * expr
   | Call of string * expr list

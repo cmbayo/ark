@@ -5,6 +5,7 @@ and sx =
   SBinop of sexpr * operator * sexpr
   | SIntLiteral of int
   | SBoolLiteral of bool
+  | SStringLiteral of string
   | SId of string
   | SAssign of string * sexpr
   | SCall of string * sexpr list

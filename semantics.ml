@@ -25,6 +25,14 @@ let check (globals, functions) =
       locals = []; body = [] } StringMap.empty
   in
 
+  let built_in_decls =
+     StringMap.add "printstring" {
+       rtyp = String;
+       fname = "printstring";
+       formals = [(String, "y")];
+       locals = []; body = [] } built_in_decls
+  in
+
 
   let add_func map fd =
     let built_in_err = "function " ^ fd.fname ^ " may not be defined"
@@ -32,12 +40,14 @@ let check (globals, functions) =
     and make_err er = raise (Failure er)
     and n = fd.fname 
     in match fd with 
-      _ when StringMap.mem n built_in_decls -> make_err built_in_err
+  
+     _ when StringMap.mem n built_in_decls -> make_err built_in_err
     | _ when StringMap.mem n map -> make_err dup_err
     | _ ->  StringMap.add n fd map
   in
 
   let function_decls = List.fold_left add_func built_in_decls functions
+  
   in
 
 
@@ -73,6 +83,7 @@ let check (globals, functions) =
     let rec check_expr = function
         IntLiteral l -> (Int, SIntLiteral l)
       | BoolLiteral l -> (Bool, SBoolLiteral l)
+      | StringLiteral l -> (String, SStringLiteral l)
       | Id var -> (type_of_identifier var, SId var)
       | Assign(var, e) as ex ->
         let lt = type_of_identifier var
