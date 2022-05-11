@@ -1,1 +1,3 @@
-print 5.
+int main(){
+print(5);
+}

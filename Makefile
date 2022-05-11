@@ -1,5 +1,11 @@
+all: ark run
+
 ark: 
-	ocamlbuild -r -package llvm ark.native && ./ark.native
+	ocamlbuild -r -package llvm ark.native && \
+	./ark.native > codegen
+
+run:
+	/usr/local/opt/llvm/bin/lli codegen
 
 .PHONY : clean
 clean :
