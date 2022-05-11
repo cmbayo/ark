@@ -121,6 +121,7 @@ let check (globals, functions) =
     and check_stmt =function
         Block sl -> SBlock (check_stmt_list sl)
       | Expr e -> SExpr (check_expr e)
+      | If (predicate, then_stmts, else_stmts) -> SIf(check_bool_expr predicate, check_stmt_list then_stmts, check_stmt_list else_stmts)
       | Return e ->
         let (t, e') = check_expr e in
         if t = func.rtyp then SReturn (t, e')

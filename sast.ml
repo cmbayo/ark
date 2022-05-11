@@ -12,6 +12,7 @@ and sx =
 type sstmt =
   SExpr of sexpr
   | SBlock of sstmt list
+  | SIf of sexpr * sstmt list * sstmt list
   | SReturn of sexpr
 
 
