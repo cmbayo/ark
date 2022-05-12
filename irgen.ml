@@ -100,6 +100,8 @@ let translate (globals, functions) =
          | A.Greater    -> L.build_icmp L.Icmp.Sgt
          | A.GreaterEqual    -> L.build_icmp L.Icmp.Sge
          | A.LessEqual -> L.build_icmp L.Icmp.Sle
+         | A.And -> L.build_and
+         | A.Or -> L.build_or
 
         ) e1' e2' "tmp" builder
         

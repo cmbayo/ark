@@ -2,7 +2,7 @@
 
 %token PLUS MINUS TIMES DIVIDE POWER ASSIGN
 %token INT BOOL STRING
-%token EQ NEQ LT GT LEQ GEQ
+%token EQ NEQ LT GT LEQ GEQ AND OR
 %token <int> INT_LITERAL
 %token <bool> BOOL_LITERAL
 %token <string> ID STRING_LITERAL
@@ -94,6 +94,8 @@ expr:
   | expr TIMES expr { Binop ($1, Multiply, $3) }
   | expr DIVIDE expr { Binop ($1, Divide, $3) }
   | expr POWER expr { Binop ($1, Power, $3)}
+  | expr AND expr       { Binop ($1, And, $3)   }
+  | expr OR expr        { Binop ($1, Or, $3)    }
   | ID ASSIGN expr   { Assign($1, $3) }
   | LPAREN expr RPAREN { $2                   }
   /* call */
