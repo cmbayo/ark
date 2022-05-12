@@ -47,3 +47,5 @@ test "bool b. b = true. if(b): print(5). ..." "5"
 test "int a. a = 5. a = a - 2. print(a)." "3"
 #test "int a = 5. print(a)." "5"
 test "str a. a = \"tron appears\". printstring(a)." "tron appears"
+STR=$'1\n2\n3\n4\n5'
+test "int a. a = 0. while(a < 5): a = a + 1. print(a). ..." "$STR"
