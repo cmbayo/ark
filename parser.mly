@@ -2,7 +2,7 @@
 
 %token PLUS MINUS TIMES DIVIDE POWER ASSIGN
 %token INT BOOL STRING
-%token EQUAL
+%token EQ NEQ LT GT LEQ GEQ
 %token <int> INT_LITERAL
 %token <bool> BOOL_LITERAL
 %token <string> ID STRING_LITERAL
@@ -87,6 +87,10 @@ expr:
   | ID            {Id ($1)}
   | expr PLUS   expr { Binop($1, Add,   $3)   }
   | expr MINUS  expr { Binop($1, Subtract,   $3)   }
+  | expr EQ     expr { Binop($1, Equal, $3)   }
+  | expr NEQ    expr { Binop($1, Neq, $3)     }
+  | expr LT     expr { Binop($1, Less,  $3)   }
+  | expr GT     expr { Binop($1, Greater,  $3)   }
   | expr TIMES expr { Binop ($1, Multiply, $3) }
   | expr DIVIDE expr { Binop ($1, Divide, $3) }
   | expr POWER expr { Binop ($1, Power, $3)}

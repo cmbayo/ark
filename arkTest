@@ -30,6 +30,11 @@ test(){
 	./ark.native < input.txt > codegen && /usr/local/opt/llvm/bin/lli codegen > ark.out
 	diffFileAndString ark.out "${2}" "\"${1}\" ==> ${2} "
 }
+testSeperate(){
+	echo "${1}" > input.txt
+	./ark.native < input.txt > codegen && /usr/local/opt/llvm/bin/lli codegen > ark.out
+	diffFileAndString ark.out "${2}" "\"${1}\" ==> ${2} "
+}
 
 test "print (9-8)." "1"
 test "print (7*6)." "42"
@@ -47,3 +52,6 @@ test "bool b. b = true. if(b): print(5). ..." "5"
 test "int a. a = 5. a = a - 2. print(a)." "3"
 #test "int a = 5. print(a)." "5"
 test "str a. a = \"tron appears\". printstring(a)." "tron appears"
+STR=$'1\n2\n3\n4\n5'
+test "int a. a = 0. while(a < 5): a = a + 1. print(a). ..." "$STR"
+testSeperate "fib{int: n} -> int: if(n == 0) return 0. ... if(n == 1) return 1. ... return fib(n-1) + fib(n-2). ... main{} -> int: print(fib(4)). ..." "3"

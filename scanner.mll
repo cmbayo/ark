@@ -13,6 +13,7 @@ let string = '"' ( ( digit | letter | [' '-'/' ':'-'@' '['-'`' '{'-'~' 't' 'r' '
 
 rule tokenize = parse
     [' ' '\t' '\r' '\n'] { tokenize lexbuf }
+    | "(*"     { comment lexbuf }          
     | '+' { PLUS }
     | '-' { MINUS }
     | '*' { TIMES }
@@ -21,21 +22,26 @@ rule tokenize = parse
     | "int" { INT }
     | "bool" { BOOL }
     | "str" { STRING }
-    | "==" { EQUAL }
     | "true" { BOOL_LITERAL(true) }
     | "false" { BOOL_LITERAL(false) }
     | "if" { IF }
     | "else" { ELSE }
     | "while" { WHILE }
+    | "def" { DEF }
+    | "input" { INPUT }
+    | "output" { OUTPUT }
+    | "return" { RETURN }
     | "(" { LPAREN }
     | ")" { RPAREN }
     | "{" { LBRACE }
     | "}" { RBRACE }
     | '=' {ASSIGN}
-    | "def" { DEF }
-    | "input" { INPUT }
-    | "output" { OUTPUT }
-    | "return" { RETURN }
+    | "==" {EQ}
+    | "!=" {NEQ}
+    | '<'      { LT }
+    | '>'      {GT}
+    | "<="      { LEQ }
+    | ">="      {GEQ}
     | digit+ as value { INT_LITERAL(int_of_string value) }
     | letter (digit | letter | '_')* as lem { ID(lem) }
     | string  { STRING_LITERAL( (str_scanner s) ) }
@@ -45,4 +51,8 @@ rule tokenize = parse
     | ':' { COLON }
     | "->" { ARROW }
     | eof { EOF }
-    | eof { EOF }
+    | _ as char { raise (Failure("illegal character " ^ Char.escaped char)) }
+
+    and comment = parse
+      "*)" { tokenize lexbuf }
+      | _    { comment lexbuf }
