@@ -1,5 +1,5 @@
 # Ark
-### Build and Run the Ark compiler
+## Build and Run the Ark compiler
 ```
 make
 ```
@@ -9,19 +9,41 @@ ocamlbuild -r -package llvm ark.native && \
 ./ark.native > codegen
 ```
 
-### Compiler files
+## Compiler files
 - `ast.ml`: abstract syntax tree (AST) definition
 - `scanner.mll`: scanner
 - `parser.mly`: parser
 - `sast.mli`: definition of the semantically-checked AST
 - `semantics.ml`: semantic checking
 - `irgen.ml`: working Intermediate Code Generation
-### Other files
+## Other files
 - `arkTest`: testing script. Usage:
 ```
  ./arkTest
 ```
-### Current working parts of the language
+
+# Functionality
+## Function Declarations
+The entry point to your Ark program is the main function. This is how you would create a simple program that:
+1. Declares a function, `foo`, that takes in three parameters and returns a string. 
+2. Calls `foo` in the main function with the appropriate arguments.
+
+If you execute this code, "hello world!" will be printed in your console!
+
+```
+foo {int a, bool b, str msg} -> str:
+        return msg.
+...
+main {} -> int:
+        printstring(foo(1, false, "hello world!")).
+...
+```
+
+## Standard Library
+`print`: prints an integer
+`printstring`: prints a string
+
+## Legacy (TODO: Reformat)
 The compiler understands basic math (+, -, /, *). 
 Compiler also takes variable assignments for ints, bools and strings.
 Compiler can print ints and strings separately. 
