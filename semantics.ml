@@ -101,6 +101,7 @@ let check (globals, functions) =
               Add | Subtract | Multiply | Divide | Power when t1 = Int -> Int
             | Equal | Neq -> Bool
             | Less | Greater | GreaterEqual | LessEqual when t1 = Int -> Bool
+            | And | Or -> Bool
             | _ -> raise (Failure "Fatal error.")
           in
           (t, SBinop((t1, e1'), op, (t2, e2')))

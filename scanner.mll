@@ -42,6 +42,8 @@ rule tokenize = parse
     | '>'      {GT}
     | "<="      { LEQ }
     | ">="      {GEQ}
+    | "&"     { AND }
+    | "||"     { OR }
     | digit+ as value { INT_LITERAL(int_of_string value) }
     | letter (digit | letter | '_')* as lem { ID(lem) }
     | string  { STRING_LITERAL( (str_scanner s) ) }
