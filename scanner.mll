@@ -32,6 +32,10 @@ rule tokenize = parse
     | "{" { LBRACE }
     | "}" { RBRACE }
     | '=' {ASSIGN}
+    | "def" { DEF }
+    | "input" { INPUT }
+    | "output" { OUTPUT }
+    | "return" { RETURN }
     | digit+ as value { INT_LITERAL(int_of_string value) }
     | letter (digit | letter | '_')* as lem { ID(lem) }
     | string  { STRING_LITERAL( (str_scanner s) ) }
@@ -40,9 +44,5 @@ rule tokenize = parse
     | ',' { COMMA }
     | ':' { COLON }
     | "->" { ARROW }
-    | "def" { DEF }
-    | "input" { INPUT }
-    | "output" { OUTPUT }
-    | "return" { RETURN }
     | eof { EOF }
     | eof { EOF }
