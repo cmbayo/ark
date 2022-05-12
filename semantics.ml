@@ -99,7 +99,9 @@ let check (globals, functions) =
         if t1 = t2 then
           let t = match op with
               Add | Subtract | Multiply | Divide | Power when t1 = Int -> Int
-              | _ -> raise (Failure "Fatal error.")
+            | Equal | Neq -> Bool
+            | Less | Greater | GreaterEqual | LessEqual when t1 = Int -> Bool
+            | _ -> raise (Failure "Fatal error.")
           in
           (t, SBinop((t1, e1'), op, (t2, e2')))
         else raise (Failure "Fatal error.") 

@@ -94,7 +94,15 @@ let translate (globals, functions) =
          | A.Multiply -> L.build_mul
          | A.Divide -> L.build_sdiv
          | A.Power -> L.build_mul (* TODO: THIS IS A PLACEHOLDER *)
+         | A.Equal   -> L.build_icmp L.Icmp.Eq
+         | A.Neq     -> L.build_icmp L.Icmp.Ne
+         | A.Less    -> L.build_icmp L.Icmp.Slt
+         | A.Greater    -> L.build_icmp L.Icmp.Sgt
+         | A.GreaterEqual    -> L.build_icmp L.Icmp.Sge
+         | A.LessEqual -> L.build_icmp L.Icmp.Sle
+
         ) e1' e2' "tmp" builder
+        
     in
 
     let add_terminal builder instr =
