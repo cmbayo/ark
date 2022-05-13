@@ -22,7 +22,9 @@ let translate (globals, functions) =
 
   let global_vars : L.llvalue StringMap.t =
     let global_var m (t, n) =
-      let init = L.const_int (ltype_of_typ t) 0
+      let init = match t with
+                A.String -> L.const_null (ltype_of_typ t)
+                | _ -> L.const_int (ltype_of_typ t) 0
       in StringMap.add n (L.define_global n init ark_module) m in
     List.fold_left global_var StringMap.empty globals in
 
