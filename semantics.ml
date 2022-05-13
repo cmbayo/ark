@@ -5,6 +5,7 @@ module StringMap = Map.Make(String)
 
 
 let check (structs, (globals, functions)) =
+  
 
   let check_binds (kind : string) (binds : (typ * string) list) =
     let rec dups = function
@@ -17,6 +18,10 @@ let check (structs, (globals, functions)) =
 
   check_binds "global" globals;
 
+  let check_struct stru = 
+    check_binds "variables" stru.variables;
+
+in
   let built_in_decls =
     StringMap.add "print" {
       rtyp = Int;
@@ -149,5 +154,9 @@ let check (structs, (globals, functions)) =
       slocals  = func.locals;
       sbody = check_stmt_list func.body
     }
+  
+  
+  
+
   in
-  (structs, (globals, List.map check_func functions))
+  (List.map check_struct structs, (globals, List.map check_func functions))

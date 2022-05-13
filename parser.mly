@@ -61,7 +61,7 @@ fdecl:
   }
 
 structdecl:
-  STRUCT ID LPAREN vdecl_list RPAREN PERIOD
+  STRUCT ID LBRACE vdecl_list RBRACE PERIOD
   {
     {
       structname = $2;
