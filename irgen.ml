@@ -4,7 +4,7 @@ open Sast
 
 module StringMap = Map.Make(String)
 
-let translate (globals, functions) =
+let translate (structs, (globals, functions)) =
   let context    = L.global_context () in
 
   let ark_module = L.create_module context "ark" in

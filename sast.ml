@@ -26,4 +26,9 @@ type sfunc_def = {
   sbody: sstmt list;
 }
 
-type sprogram = bind list * sfunc_def list
+type sstruct_def = {
+    sstructname: string;
+    svariables: bind list;
+}
+
+type sprogram = sstruct_def *(bind list * sfunc_def list)

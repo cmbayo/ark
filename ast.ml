@@ -31,5 +31,10 @@ type func_def = {
   locals: bind list;
   body: stmt list;
 }
+(* struct books(int a. int b. )*)
+type struct_def = {
+    structname: string;
+    variables: bind list;
+}
 
-type program = bind list * func_def list
+type program = struct_def list * (bind list * func_def list)

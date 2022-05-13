@@ -4,7 +4,7 @@ open Sast
 module StringMap = Map.Make(String)
 
 
-let check (globals, functions) =
+let check (structs, (globals, functions)) =
 
   let check_binds (kind : string) (binds : (typ * string) list) =
     let rec dups = function
@@ -150,4 +150,4 @@ let check (globals, functions) =
       sbody = check_stmt_list func.body
     }
   in
-  (globals, List.map check_func functions)
+  (structs, (globals, List.map check_func functions))

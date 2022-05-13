@@ -6,7 +6,7 @@
 %token <int> INT_LITERAL
 %token <bool> BOOL_LITERAL
 %token <string> ID STRING_LITERAL
-%token <string> ID
+%token STRUCT
 %token IF ELSE WHILE
 %token LBRACE RBRACE LPAREN RPAREN
 %token ARROW COLON ELLIPSIS
@@ -28,9 +28,10 @@ program:
   decls EOF { $1}
 
 decls:
-   /* nothing */ { ([], []) }
- | vdecl PERIOD decls { (($1 :: fst $3), snd $3) }
- | fdecl decls { (fst $2, ($1 :: snd $2)) }
+   /* nothing */ { ([], ([], [])) }
+ | structdecl PERIOD decls {($1:: fst $3, (fst (snd $3), snd (snd $3)))}
+ | vdecl PERIOD decls { (fst $3, ($1 :: fst (snd $3), snd (snd $3))) }
+ | fdecl decls { (fst $2, (fst (snd $2), $1 :: snd (snd $2))) }
 
 vdecl_list:
   /*nothing*/ { [] }
@@ -58,6 +59,16 @@ fdecl:
       body=$9
     }
   }
+
+structdecl:
+  STRUCT ID LPAREN vdecl_list RPAREN PERIOD
+  {
+    {
+      structname = $2;
+      variables = $4;
+    }
+  }
+
 
 /* formals_opt */
 formals_opt:
