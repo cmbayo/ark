@@ -117,8 +117,8 @@ let check (structs, (globals, functions)) =
     in
 
     (* Return a variable from our local symbol table *)
-    let type_of_identifier s =
-      try StringMap.find s symbols
+    let type_of_identifier s table =
+      try StringMap.find s table
       with Not_found -> raise (Failure ("undeclared identifier " ^ s))
     in
 
@@ -127,15 +127,15 @@ let check (structs, (globals, functions)) =
         IntLiteral l -> (Int, SIntLiteral l)
       | BoolLiteral l -> (Bool, SBoolLiteral l)
       | StringLiteral l -> (String, SStringLiteral l)
-      | Id var -> (type_of_identifier var, SId var)
+      | Id var -> (type_of_identifier var symbols, SId var)
       | Assign(var, e) as ex ->
-        let lt = type_of_identifier var
+        let lt = type_of_identifier var symbols
         and (rt, e') = check_expr e in
         let err = "illegal assignment" 
         in
         (check_assign lt rt err, SAssign(var, (rt, e')))
       | StructAssign(structname, variablename, e) ->
-        let lt = type_of_identifier variablename
+        let lt = type_of_identifier (structname ^ ":" ^ variablename) struct_symbols
         and (rt, e') = check_expr e in
         let err = "illegal assignment" 
         in
