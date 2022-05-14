@@ -188,4 +188,4 @@ let check (structs, (globals, functions)) =
   
 
   in
-  (structs, (globals, List.map check_func functions))
+  (List.map check_struct structs, (globals, List.map check_func functions))
