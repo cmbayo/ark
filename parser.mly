@@ -17,9 +17,12 @@
 %start program
 %type <Ast.program> program
 
+%left COMMA
 %right ASSIGN
+%left EQ NEQ LT GT LEQ GEQ AND OR
 %left PLUS MINUS
 %left TIMES POWER DIVIDE
+%left LBRACE RBRACE LPAREN RPAREN
 
 %%
 
