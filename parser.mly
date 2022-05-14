@@ -107,6 +107,7 @@ expr:
   | expr AND expr       { Binop ($1, And, $3)   }
   | expr OR expr        { Binop ($1, Or, $3)    }
   | ID ASSIGN expr   { Assign($1, $3) }
+  | ID COLON ID ASSIGN expr { StructAssign($1,$3,$5)  }
   | LPAREN expr RPAREN { $2                   }
   /* call */
   | ID LPAREN args_opt RPAREN { Call ($1, $3)  }
