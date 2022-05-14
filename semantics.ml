@@ -33,10 +33,10 @@ let check (structs, (globals, functions)) =
   let struct_decls = List.fold_left add_struct built_in_structs structs
   in
 
-  let find_struct s =
+  (* let find_struct s =
     try StringMap.find s struct_decls
     with Not_found -> raise (Failure ("unrecognized struct " ^ s))
-  in
+  in *)
 
   (* let find_struct_variable s var =
     try StringMap.find s struct_decls
@@ -47,17 +47,9 @@ let check (structs, (globals, functions)) =
 
   let check_struct sd = 
     check_binds "variables" sd.svariables;
-    (* let struct_check_assign lvaluet rvaluet err =
-      if lvaluet = rvaluet then lvaluet else raise (Failure err)
-    in *)
-    let struct_symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
-        StringMap.empty sd.svariables;
 
-    (* let struct_type_of_identifier s =
-      try StringMap.find s struct_symbols
-      with Not_found -> raise (Failure ("undeclared identifier " ^ s))
-    in *)
   in 
+
   let built_in_decls =
     StringMap.add "print" {
       rtyp = Int;
@@ -112,6 +104,16 @@ let check (structs, (globals, functions)) =
     (* Build local symbol table of variables for this function *)
     let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
         StringMap.empty (globals @ func.formals @ func.locals )
+    in
+
+    (* Build local struct symbol table of variables for this function *)
+    let struct_symbols = List.fold_left 
+        (fun m s -> List.fold_left 
+                    (fun m (ty, name) -> StringMap.add (String.concat ":" [s.sname; name]) ty m)
+                    m
+                    s.svariables)
+        StringMap.empty 
+        structs
     in
 
     (* Return a variable from our local symbol table *)
