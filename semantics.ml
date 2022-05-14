@@ -17,6 +17,22 @@ let check (structs, (globals, functions)) =
   in
 
   check_binds "global" globals;
+  
+  let add_stru map sd = 
+          let sdup_err = "duplicate structure " ^ sd.structname
+          and smake_err er = raise (Failure er)
+          and m = sd.structname
+          in match sd with
+           _ when StringMap.mem m map -> smake_err sdup_err
+         | _ -> StringMap.add m sd map
+  in
+  let stru_decls = List.fold_left add_stru StringMap.empty structs
+  in
+
+  
+  let check_struct stru = 
+    check_binds "variables" stru.variables;
+  in
 
   let built_in_decls =
     StringMap.add "print" {
