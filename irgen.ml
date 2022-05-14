@@ -130,9 +130,9 @@ let translate (globals, functions) =
         let bool_val = build_expr builder predicate in
 
         let then_bb = L.append_block context "then" the_function in
-        build_block(then_block, then_bb);
+        ignore(build_block(then_block, then_bb));
         let else_bb = L.append_block context "else" the_function in
-        build_block(else_block, else_bb);
+        ignore(build_block(else_block, else_bb));
 
         let end_bb = L.append_block context "if_end" the_function in
         let build_br_end = L.build_br end_bb in (* partial function *)
@@ -157,7 +157,7 @@ let translate (globals, functions) =
         let bool_val = build_expr while_builder predicate in
 
         let body_bb = L.append_block context "while_body" the_function in
-        build_block(loop_body, body_bb);
+        ignore(build_block(loop_body, body_bb));
         add_terminal (L.builder_at_end context body_bb) build_br_while;
 
         let end_bb = L.append_block context "while_end" the_function in
