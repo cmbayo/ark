@@ -18,10 +18,6 @@ let check (structs, (globals, functions)) =
 
   check_binds "global" globals;
 
-  let check_struct stru = 
-    check_binds "variables" stru.variables;
-
-in
   let built_in_decls =
     StringMap.add "print" {
       rtyp = Int;
@@ -159,4 +155,4 @@ in
   
 
   in
-  (List.map check_struct structs, (globals, List.map check_func functions))
+  (structs, (globals, List.map check_func functions))

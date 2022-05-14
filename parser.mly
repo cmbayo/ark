@@ -2,11 +2,11 @@
 
 %token PLUS MINUS TIMES DIVIDE POWER ASSIGN
 %token INT BOOL STRING
+%token STRUCT
 %token EQ NEQ LT GT LEQ GEQ AND OR
 %token <int> INT_LITERAL
 %token <bool> BOOL_LITERAL
 %token <string> ID STRING_LITERAL
-%token STRUCT
 %token IF ELSE WHILE
 %token LBRACE RBRACE LPAREN RPAREN
 %token ARROW COLON ELLIPSIS
@@ -25,13 +25,22 @@
 
 /* add function declarations*/
 program:
-  decls EOF { $1}
+  body EOF { $1}
+
+body:
+  structdecl_list decls   {($1, $2)}
+
+structdecl_list:
+  /* nothing */		              { []      }
+  | structdecl structdecl_list    { $1::$2  }
+
+structdecl:
+  STRUCT ID LBRACE vdecl_list RBRACE PERIOD {StructDecl($2, $4)}
 
 decls:
-   /* nothing */ { ([], ([], [])) }
- | structdecl PERIOD decls {($1:: fst $3, (fst (snd $3), snd (snd $3)))}
- | vdecl PERIOD decls { (fst $3, ($1 :: fst (snd $3), snd (snd $3))) }
- | fdecl decls { (fst $2, (fst (snd $2), $1 :: snd (snd $2))) }
+   /* nothing */ { ([], []) }
+ | vdecl PERIOD decls { (($1 :: fst $3), snd $3) }
+ | fdecl decls { (fst $2, ($1 :: snd $2)) }
 
 vdecl_list:
   /*nothing*/ { [] }
@@ -59,16 +68,6 @@ fdecl:
       body=$9
     }
   }
-
-structdecl:
-  STRUCT ID LBRACE vdecl_list RBRACE PERIOD
-  {
-    {
-      structname = $2;
-      variables = $4;
-    }
-  }
-
 
 /* formals_opt */
 formals_opt:

@@ -8,6 +8,7 @@ and sx =
   | SStringLiteral of string
   | SId of string
   | SAssign of string * sexpr
+  | SStructAssign of string * string * sexpr
   | SCall of string * sexpr list
 
 type sstmt =
@@ -26,9 +27,9 @@ type sfunc_def = {
   sbody: sstmt list;
 }
 
-type sstruct_def = {
+type sstruct_decl = {
     sstructname: string;
     svariables: bind list;
 }
 
-type sprogram = sstruct_def *(bind list * sfunc_def list)
+type sprogram = struct_decl list *(bind list * sfunc_def list)

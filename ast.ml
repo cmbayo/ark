@@ -1,6 +1,8 @@
-type typ = Int | Bool | String
+type typ = Int | Bool | String | Struct of string
 type operator = Add | Subtract | Multiply | Divide | Power | Equal | Neq | Less | Greater | LessEqual | GreaterEqual | And | Or
-
+(* int x: name binding *)
+type bind = typ * string
+type struct_decl = StructDecl of string * bind list
 
 
 type expr = 
@@ -10,6 +12,7 @@ type expr =
   | StringLiteral of string
   | Id of string
   | Assign of string * expr
+  | StructAssign of string * string * expr
   | Call of string * expr list
 
 type stmt =
@@ -19,8 +22,7 @@ type stmt =
   | While of expr * stmt list
   | Return of expr
 
-  (* int x: name binding *)
-type bind = typ * string
+
 
 
 (* func_def: ret_typ fname formals locals body *)
@@ -31,10 +33,6 @@ type func_def = {
   locals: bind list;
   body: stmt list;
 }
-(* struct books(int a. int b. )*)
-type struct_def = {
-    structname: string;
-    variables: bind list;
-}
 
-type program = struct_def list * (bind list * func_def list)
+
+type program = struct_decl list * (bind list * func_def list)
