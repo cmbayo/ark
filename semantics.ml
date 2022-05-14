@@ -33,24 +33,31 @@ let check (structs, (globals, functions)) =
   let struct_decls = List.fold_left add_struct built_in_structs structs
   in
 
+  let find_struct s =
+    try StringMap.find s struct_decls
+    with Not_found -> raise (Failure ("unrecognized struct " ^ s))
+  in
+
+  (* let find_struct_variable s var =
+    try StringMap.find s struct_decls
+    with Not_found -> raise (Failure ("unrecognized struct " ^ s))
+    s.svariables
+
+  in *)
 
   let check_struct sd = 
     check_binds "variables" sd.svariables;
-  in
+    (* let struct_check_assign lvaluet rvaluet err =
+      if lvaluet = rvaluet then lvaluet else raise (Failure err)
+    in *)
+    let struct_symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
+        StringMap.empty sd.svariables;
 
-(*
-  let check_struct (kind: string) (variables: (typ * string * bind list) list) =
-          (*print_string name;*)
-          let rec dups = function
-                  [] -> ()
-                | ((_,n1, _) :: (_,n2,_) :: _) when n1 = n2 ->
-                  raise (Failure ("duplicate " ^ kind ^ " " ^ n1))
-                | _ :: t -> dups t
-              in dups (List.sort (fun (_,a, _) (_,b,_) -> compare a b) variables)
-  in
-
-  check_struct "struct" structs;
-*)
+    (* let struct_type_of_identifier s =
+      try StringMap.find s struct_symbols
+      with Not_found -> raise (Failure ("undeclared identifier " ^ s))
+    in *)
+  in 
   let built_in_decls =
     StringMap.add "print" {
       rtyp = Int;
@@ -125,6 +132,13 @@ let check (structs, (globals, functions)) =
         let err = "illegal assignment" 
         in
         (check_assign lt rt err, SAssign(var, (rt, e')))
+      | StructAssign(structname, variablename, e) ->
+        let lt = type_of_identifier variablename
+        and (rt, e') = check_expr e in
+        let err = "illegal assignment" 
+        in
+        (check_assign lt rt err, SStructAssign(structname, variablename, (rt, e')))
+
       | Binop(e1, op, e2) as e ->
         let (t1, e1') = check_expr e1
         and (t2, e2') = check_expr e2 in
