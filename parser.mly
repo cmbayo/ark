@@ -35,7 +35,12 @@ structdecl_list:
   | structdecl structdecl_list    { $1::$2  }
 
 structdecl:
-  STRUCT ID LBRACE vdecl_list RBRACE PERIOD {StructDecl($2, $4)}
+  STRUCT ID LBRACE vdecl_list RBRACE PERIOD {
+                {
+                  sname = $2;
+                  svariables = $4
+                }
+  }
 
 decls:
    /* nothing */ { ([], []) }

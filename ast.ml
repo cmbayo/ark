@@ -2,8 +2,10 @@ type typ = Int | Bool | String | Struct of string
 type operator = Add | Subtract | Multiply | Divide | Power | Equal | Neq | Less | Greater | LessEqual | GreaterEqual | And | Or
 (* int x: name binding *)
 type bind = typ * string
-type struct_decl = StructDecl of string * bind list
-
+type struct_decl = {
+        sname: string;
+        svariables: bind list;
+}
 
 type expr = 
   | Binop of expr * operator * expr

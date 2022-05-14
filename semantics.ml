@@ -17,23 +17,40 @@ let check (structs, (globals, functions)) =
   in
 
   check_binds "global" globals;
-  
-  let add_stru map sd = 
-          let sdup_err = "duplicate structure " ^ sd.structname
+
+  let built_in_structs = StringMap.empty
+
+  in
+
+  let add_struct smap sd = 
+          let sdup_err = "duplicate structure " ^ sd.sname
           and smake_err er = raise (Failure er)
-          and m = sd.structname
+          and m = sd.sname
           in match sd with
-           _ when StringMap.mem m map -> smake_err sdup_err
-         | _ -> StringMap.add m sd map
+           _ when StringMap.mem m smap -> smake_err sdup_err
+         | _ -> StringMap.add m sd smap
   in
-  let stru_decls = List.fold_left add_stru StringMap.empty structs
-  in
-
-  
-  let check_struct stru = 
-    check_binds "variables" stru.variables;
+  let struct_decls = List.fold_left add_struct built_in_structs structs
   in
 
+
+  let check_struct sd = 
+    check_binds "variables" sd.svariables;
+  in
+
+(*
+  let check_struct (kind: string) (variables: (typ * string * bind list) list) =
+          (*print_string name;*)
+          let rec dups = function
+                  [] -> ()
+                | ((_,n1, _) :: (_,n2,_) :: _) when n1 = n2 ->
+                  raise (Failure ("duplicate " ^ kind ^ " " ^ n1))
+                | _ :: t -> dups t
+              in dups (List.sort (fun (_,a, _) (_,b,_) -> compare a b) variables)
+  in
+
+  check_struct "struct" structs;
+*)
   let built_in_decls =
     StringMap.add "print" {
       rtyp = Int;
