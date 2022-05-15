@@ -65,3 +65,7 @@ test "if(false & true): printstring(\"banksy was here\"). ... print(0)." "0"
 test "if(true & false): printstring(\"banksy was here\"). ... print(0)." "0"
 test "if(true & true): printstring(\"banksy was here\"). ..." "banksy was here"
 test "bool a. a = true. if(false || a): printstring(\"banksy was here\"). ..." "banksy was here"
+testSeperate "boo{int n, bool tf} -> int: if(tf): return n+1. ... return n. ... main{} -> int: print(boo(1, true)). ..." "2"
+testSeperate "str test. main{} -> int: test = \"I'm outside main.\". printstring(test). ..." "I'm outside main."
+testSeperate "struct test{int a. int b.}. main{} -> int: print(3). ..." "3"
+#
