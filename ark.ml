@@ -18,8 +18,10 @@ let () =
     read_input_helper "" chan
   in
 
+  let stdlib = read_input (open_in "stdlib.ark") in
   let source = read_input !channel in
-  let lexbuf = Lexing.from_string source in
+  let linked_source = stdlib ^ source in
+  let lexbuf = Lexing.from_string linked_source in
   let ast = Parser.program Scanner.tokenize lexbuf in
   let sast = Semantics.check ast in
   let codegen = Irgen.translate sast in
