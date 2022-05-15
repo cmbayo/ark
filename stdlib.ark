@@ -1,3 +1,8 @@
-foo {} -> int:
-  printstring("hello world").
+printbool {bool val} -> bool:
+  if (val):
+    printstring("true").
+  ... else:
+  printstring("false").
+  ...
+  return true.
 ...
