@@ -114,25 +114,26 @@ let translate (globals, functions) =
         Some _ -> ()
       | None -> ignore (instr builder) in
 
-    let rec build_stmt builder = function
+    let rec build_stmt builder sstmt =
+      let rec build_block(block, bb) =
+        match block with
+          [] -> None
+          | stmt :: tail -> 
+            ignore(build_stmt (L.builder_at_end context bb) stmt);
+            build_block(tail, bb)
+      in
+
+      match sstmt with
         SBlock sl -> List.fold_left build_stmt builder sl
       | SExpr e -> ignore(build_expr builder e); builder
       | SReturn e -> ignore(L.build_ret (build_expr builder e) builder); builder
       | SIf (predicate, then_block, else_block) ->
-        let rec build_block(block, bb) =
-          (match block with
-            [] -> None
-            | stmt :: tail -> 
-              ignore(build_stmt (L.builder_at_end context bb) stmt);
-              build_block(tail, bb))
-        in
-
         let bool_val = build_expr builder predicate in
 
         let then_bb = L.append_block context "then" the_function in
-        build_block(then_block, then_bb);
+        ignore(build_block(then_block, then_bb));
         let else_bb = L.append_block context "else" the_function in
-        build_block(else_block, else_bb);
+        ignore(build_block(else_block, else_bb));
 
         let end_bb = L.append_block context "if_end" the_function in
         let build_br_end = L.build_br end_bb in (* partial function *)
@@ -142,14 +143,6 @@ let translate (globals, functions) =
         ignore(L.build_cond_br bool_val then_bb else_bb builder);
         L.builder_at_end context end_bb
       | SWhile (predicate, loop_body) ->
-        let rec build_block(block, bb) =
-          (match block with
-            [] -> None
-            | stmt :: tail -> 
-              ignore(build_stmt (L.builder_at_end context bb) stmt);
-              build_block(tail, bb))
-        in
-
         let while_bb = L.append_block context "while" the_function in
         let build_br_while = L.build_br while_bb in (* partial function *)
         ignore (build_br_while builder);
@@ -157,7 +150,7 @@ let translate (globals, functions) =
         let bool_val = build_expr while_builder predicate in
 
         let body_bb = L.append_block context "while_body" the_function in
-        build_block(loop_body, body_bb);
+        ignore(build_block(loop_body, body_bb));
         add_terminal (L.builder_at_end context body_bb) build_br_while;
 
         let end_bb = L.append_block context "while_end" the_function in
