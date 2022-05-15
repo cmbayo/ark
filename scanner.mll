@@ -24,6 +24,7 @@ rule tokenize = parse
     | "str" { STRING }
     | "true" { BOOL_LITERAL(true) }
     | "false" { BOOL_LITERAL(false) }
+    | "list" { LIST }
     | "if" { IF }
     | "else" { ELSE }
     | "while" { WHILE }
@@ -35,6 +36,8 @@ rule tokenize = parse
     | ")" { RPAREN }
     | "{" { LBRACE }
     | "}" { RBRACE }
+    | "[" { LBRACK }
+    | "]" { RBRACK }
     | '=' {ASSIGN}
     | "==" {EQ}
     | "!=" {NEQ}

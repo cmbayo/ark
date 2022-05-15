@@ -12,18 +12,21 @@ let translate (globals, functions) =
   let i32_t      = L.i32_type    context
   and i8_t       = L.i8_type     context
   and i1_t       = L.i1_type     context
-  and string_t   = L.pointer_type (L.i8_type context) in
+  and string_t   = L.pointer_type (L.i8_type context) 
+  and list_t     = L.pointer_type (L.i8_type context) in
 
   let ltype_of_typ = function
       A.Int   -> i32_t
     | A.Bool  -> i1_t
     | A.String -> string_t
+    | A.List -> list_t
   in
 
   let global_vars : L.llvalue StringMap.t =
     let global_var m (t, n) =
       let init = match t with
                 A.String -> L.const_null (ltype_of_typ t)
+                | A.List -> L.const_null (ltype_of_typ t)
                 | _ -> L.const_int (ltype_of_typ t) 0
       in StringMap.add n (L.define_global n init ark_module) m in
     List.fold_left global_var StringMap.empty globals in

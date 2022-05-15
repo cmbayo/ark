@@ -104,6 +104,11 @@ let check (globals, functions) =
           in
           (t, SBinop((t1, e1'), op, (t2, e2')))
         else raise (Failure "Fatal error.") 
+
+      | ListLiteral l -> 
+        let l' = List.map (fun e -> check_expr e) l in 
+        (List, SListLiteral l')
+
       | Call(fname, args) ->
         let fd = find_func fname in
         let param_length = List.length fd.formals in

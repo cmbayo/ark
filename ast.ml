@@ -1,4 +1,4 @@
-type typ = Int | Bool | String
+type typ = Int | Bool | String | List
 type operator = Add | Subtract | Multiply | Divide | Power | Equal | Neq | Less | Greater | LessEqual | GreaterEqual | And | Or
 
 
@@ -8,9 +8,12 @@ type expr =
   | IntLiteral of int
   | BoolLiteral of bool
   | StringLiteral of string
+  | ListLiteral of expr list
+  | ListPattern of string * string
   | Id of string
   | Assign of string * expr
   | Call of string * expr list
+
 
 type stmt =
     Block of stmt list

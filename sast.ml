@@ -6,6 +6,8 @@ and sx =
   | SIntLiteral of int
   | SBoolLiteral of bool
   | SStringLiteral of string
+  | SListLiteral of sexpr list
+  | SListPattern of string * string
   | SId of string
   | SAssign of string * sexpr
   | SCall of string * sexpr list

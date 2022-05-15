@@ -1,14 +1,14 @@
 %{ open Ast %}
 
 %token PLUS MINUS TIMES DIVIDE POWER ASSIGN
-%token INT BOOL STRING
+%token INT BOOL STRING LIST
 %token EQ NEQ LT GT LEQ GEQ AND OR
 %token <int> INT_LITERAL
 %token <bool> BOOL_LITERAL
 %token <string> ID STRING_LITERAL
 %token <string> ID
 %token IF ELSE WHILE
-%token LBRACE RBRACE LPAREN RPAREN
+%token LBRACE RBRACE LPAREN RPAREN LBRACK RBRACK
 %token ARROW COLON ELLIPSIS
 %token PERIOD COMMA
 %token RETURN DEF INPUT OUTPUT
@@ -22,7 +22,7 @@
 %left EQ NEQ LT GT LEQ GEQ AND OR
 %left PLUS MINUS
 %left TIMES POWER DIVIDE
-%left LBRACE RBRACE LPAREN RPAREN
+%left LBRACE RBRACE LPAREN RPAREN LBRACK RBRACK
 
 %%
 
@@ -47,6 +47,7 @@ typ:
   INT   { Int }
   | BOOL  { Bool }
   | STRING { String }
+  | LIST { List }
   
 
 /* fdecl */
@@ -101,6 +102,8 @@ expr:
   | expr OR expr        { Binop ($1, Or, $3)    }
   | ID ASSIGN expr   { Assign($1, $3) }
   | LPAREN expr RPAREN { $2                   }
+  | LBRACK args_opt RBRACK { ListLiteral($2) }
+  | ID COLON COLON ID { ListPattern($1, $4) }
   /* call */
   | ID LPAREN args_opt RPAREN { Call ($1, $3)  }
   
