@@ -61,6 +61,16 @@ fdecl:
       body=$9
     }
   }
+  | ID LBRACE formals_opt RBRACE COLON vdecl_list stmt_list ELLIPSIS
+  {
+    {
+      rtyp=Int;
+      fname=$1;
+      formals=$3;
+      locals=$6;
+      body=$7
+    }
+  }
 
 /* formals_opt */
 formals_opt:
