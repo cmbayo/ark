@@ -5,6 +5,11 @@
 compilationOutput="exampleOutput.txt" 
 stringCompare="A false or different case."
 
+test=0
+pass=0
+parse=0
+general=0
+
 # diffFiles correctOutput.txt $compilationOutput
 # diffFileAndString correctOutput.txt "$stringCompare"
 # diffTwoStrings "same" "same"
@@ -16,10 +21,13 @@ diffFiles () {
 }
 
 diffFileAndString () {
-	if diff $1 <(echo "${2}"); then echo "${3}...Okay!"
-        elif [[ 2 -ne "$4" ]]; then  echo "${3}...Bad"
-	else echo "${3}...PARSE ERROR!!!"
-        fi
+	if [[ 2 -eq $4 ]]; then 
+		echo "PARSE ERROR!!! : ${3}" && ((parse++))
+	else
+		if diff $1 <(echo "${2}"); then echo "Okay! : ${3}" && ((pass++))
+		else echo "Bad. : ${3}" && ((general++))
+		fi
+	fi
 }
 diffTwoStrings() {
 	if diff <(echo $1) <(echo $2); then echo "Outputs seem to be the same."
@@ -27,11 +35,13 @@ diffTwoStrings() {
         fi
 }
 test(){
+	((test++))
 	echo "main {} -> int: ${1} ..." > input.txt
 	./ark.native < input.txt > codegen 2>/dev/null && /usr/local/opt/llvm/bin/lli codegen > ark.out
 	diffFileAndString ark.out "${2}" "\"${1}\" ==> ${2} " $?
 }
 testSeperate(){
+	((test++))
 	echo "${1}" > input.txt
 	./ark.native < input.txt > codegen 2>/dev/null && /usr/local/opt/llvm/bin/lli codegen > ark.out
 	diffFileAndString ark.out "${2}" "\"${1}\" ==> ${2} " $?
@@ -70,3 +80,7 @@ testSeperate "boo{int n, bool tf} -> int: if(tf): return n+1. ... return n. ... 
 testSeperate "str test. main{} -> int: test = \"I'm outside main.\". printstring(test). ..." "I'm outside main."
 testSeperate "struct test{int a. int b.}. main{} -> int: print(3). ..." "3"
 #
+echo "-------------------------------------------"
+echo " "
+echo "${pass}/${test} test cases passed, ${general} incorrect case(s),  ${parse} parse error(s)."
+echo " "
