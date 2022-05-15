@@ -30,8 +30,15 @@ let check (structs, (globals, functions)) =
            _ when StringMap.mem m smap -> smake_err sdup_err
          | _ -> StringMap.add m sd smap
   in
-  let struct_decls = List.fold_left add_struct built_in_structs structs
+  let check_struct struc =
+    let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name (ty, name, 0) m) StringMap.empty struc.svariables
+    in
+      {
+        ssname = struc.sname;
+        ssvariables = struc.svariables;
+    }
   in
+
 
   (* let find_struct s =
     try StringMap.find s struct_decls
@@ -44,11 +51,6 @@ let check (structs, (globals, functions)) =
     s.svariables
 
   in *)
-
-  let check_struct sd = 
-    check_binds "variables" sd.svariables;
-
-  in 
 
   let built_in_decls =
     StringMap.add "print" {
@@ -140,6 +142,12 @@ let check (structs, (globals, functions)) =
         let err = "illegal assignment" 
         in
         (check_assign lt rt err, SStructAssign(structname, variablename, (rt, e')))
+      | StructGet(v, m) -> 
+        let stringName = match v with
+            Id i -> i
+            | _ -> raise(Failure("Invalid identifier for struct")) in  
+        let lt, vname = find_name v "assignment error" in
+      (Int, SStructGet((lt, vname), m))
 
       | Binop(e1, op, e2) as e ->
         let (t1, e1') = check_expr e1
@@ -168,6 +176,10 @@ let check (structs, (globals, functions)) =
           in
           let args' = List.map2 check_call fd.formals args
           in (fd.rtyp, SCall(fname, args'))
+          
+    and find_name name err = match name with
+        Id _ -> check_expr name
+        | _ -> raise (Failure ("find name error"))
     in
 
     let check_bool_expr e =
@@ -185,8 +197,8 @@ let check (structs, (globals, functions)) =
     and check_stmt =function
         Block sl -> SBlock (check_stmt_list sl)
       | Expr e -> SExpr (check_expr e)
-      | If (predicate, then_stmts, else_stmts) -> SIf(check_bool_expr predicate, check_stmt_list then_stmts, check_stmt_list else_stmts)
-      | While (predicate, loop_body) -> SWhile(check_bool_expr predicate, check_stmt_list loop_body)
+      | If (predicate, then_stmts, else_stmts) -> SIf(check_bool_expr predicate, check_stmt then_stmts, check_stmt else_stmts)
+      | While (predicate, loop_body) -> SWhile(check_bool_expr predicate, check_stmt loop_body)
       | Return e ->
         let (t, e') = check_expr e in
         if t = func.rtyp then SReturn (t, e')
@@ -204,4 +216,5 @@ let check (structs, (globals, functions)) =
   
 
   in
+  
   (List.map check_struct structs, (globals, List.map check_func functions))

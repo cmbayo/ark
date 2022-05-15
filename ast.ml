@@ -1,13 +1,13 @@
 type typ = Int | Bool | String | Struct of string
 type operator = Add | Subtract | Multiply | Divide | Power | Equal | Neq | Less | Greater | LessEqual | GreaterEqual | And | Or
 (* int x: name binding *)
-type bind = typ * string
-type struct_decl = {
+and bind = typ * string
+and struct_decl = {
         sname: string;
         svariables: bind list;
 }
 
-type expr = 
+and expr = 
   | Binop of expr * operator * expr
   | IntLiteral of int
   | BoolLiteral of bool
@@ -15,13 +15,14 @@ type expr =
   | Id of string
   | Assign of string * expr
   | StructAssign of string * string * expr
+  | StructGet of expr * expr
   | Call of string * expr list
 
 type stmt =
     Block of stmt list
   | Expr of expr
-  | If of expr * stmt list * stmt list
-  | While of expr * stmt list
+  | If of expr * stmt * stmt 
+  | While of expr * stmt
   | Return of expr
 
 

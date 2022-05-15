@@ -13,13 +13,14 @@ and sx =
   | SId of string
   | SAssign of string * sexpr
   | SStructAssign of string * string * sexpr
+  | SStructGet of sexpr * expr
   | SCall of string * sexpr list
 
 type sstmt =
   SExpr of sexpr
   | SBlock of sstmt list
-  | SIf of sexpr * sstmt list * sstmt list
-  | SWhile of sexpr * sstmt list
+  | SIf of sexpr * sstmt * sstmt 
+  | SWhile of sexpr * sstmt
   | SReturn of sexpr
 
 
