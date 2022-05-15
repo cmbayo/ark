@@ -1,10 +1,9 @@
-printbool {bool val} -> bool:
+printbool {bool val}:
   if (val):
     printstring("true").
   ... else:
   printstring("false").
   ...
-  return true.
 ...
 
 power {int base, int exponent} -> int:
