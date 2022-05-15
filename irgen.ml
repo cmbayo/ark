@@ -28,6 +28,17 @@ let translate (structs, (globals, functions)) =
       in StringMap.add n (L.define_global n init ark_module) m in
     List.fold_left global_var StringMap.empty globals in
 
+  let structs_vars : L.llvalue StringMap.t =
+    let structs_var m s = 
+      let init t = match t with 
+                A.String -> L.const_null (ltype_of_typ t)
+                | _ -> L.const_int (ltype_of_typ t) 0
+      in List.fold_left
+          (fun m (t, n) -> StringMap.add (s.ssname ^ ":" ^ n) (L.define_global (s.ssname ^ ":" ^ n) (init t) ark_module) m)
+          m
+          s.ssvariables in
+    List.fold_left structs_var StringMap.empty structs in
+
   let printf_t : L.lltype =
     L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
   let printf_func : L.llvalue =
