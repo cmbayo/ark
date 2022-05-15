@@ -17,7 +17,8 @@ diffFiles () {
 
 diffFileAndString () {
 	if diff $1 <(echo "${2}"); then echo "${3}...Okay!"
-        else echo "${3}...Bad"
+        elif [[ 2 -ne "$4" ]]; then  echo "${3}...Bad"
+	else echo "${3}...PARSE ERROR!!!"
         fi
 }
 diffTwoStrings() {
@@ -27,13 +28,13 @@ diffTwoStrings() {
 }
 test(){
 	echo "main {} -> int: ${1} ..." > input.txt
-	./ark.native < input.txt > codegen && /usr/local/opt/llvm/bin/lli codegen > ark.out
-	diffFileAndString ark.out "${2}" "\"${1}\" ==> ${2} "
+	./ark.native < input.txt > codegen 2>/dev/null && /usr/local/opt/llvm/bin/lli codegen > ark.out
+	diffFileAndString ark.out "${2}" "\"${1}\" ==> ${2} " $?
 }
 testSeperate(){
 	echo "${1}" > input.txt
-	./ark.native < input.txt > codegen && /usr/local/opt/llvm/bin/lli codegen > ark.out
-	diffFileAndString ark.out "${2}" "\"${1}\" ==> ${2} "
+	./ark.native < input.txt > codegen 2>/dev/null && /usr/local/opt/llvm/bin/lli codegen > ark.out
+	diffFileAndString ark.out "${2}" "\"${1}\" ==> ${2} " $?
 }
 
 test "print (9-8)." "1"
