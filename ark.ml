@@ -1,25 +1,28 @@
-  type action = Ast | Sast | LLVM_IR
+let () =
+  let speclist = [] in
+  let usage_msg = "usage: ./ark.native [-a|-s|-l] [file.mc]" in
+  let channel = ref stdin in
+  Arg.parse speclist (fun filename -> channel := open_in filename) usage_msg;
 
-  let () =
-    let action = ref LLVM_IR in
-    let set_action a () = action := a in
-    let speclist = [
-      ("-a", Arg.Unit (set_action Ast), "Print the AST");
-      ("-s", Arg.Unit (set_action Sast), "Print the SAST");
-      ("-l", Arg.Unit (set_action LLVM_IR), "Print the generated LLVM IR");
-    ] in
-    let usage_msg = "usage: ./ark.native [-a|-s|-l] [file.mc]" in
-    let channel = ref stdin in
-    Arg.parse speclist (fun filename -> channel := open_in filename) usage_msg;
-  
-    let lexbuf = Lexing.from_channel !channel in
-  
-    let ast = Parser.program Scanner.tokenize lexbuf in
-    match !action with
-      Ast -> print_string "ast"
-    | _ -> let sast = Semantics.check ast in
-      match !action with
-        Ast     -> ()
-      | Sast    -> print_string "sast"
-      | LLVM_IR -> print_string (Llvm.string_of_llmodule (Irgen.translate sast))
-  
+  let read_input chan =
+    let safe_read_line chan =
+      try Some(input_line chan) with
+      End_of_file -> None
+    in
+
+    let rec read_input_helper input chan =
+      match safe_read_line chan with
+      | Some(line) -> read_input_helper (input ^ "\n" ^ line) chan
+      | None -> input
+    in
+    read_input_helper "" chan
+  in
+
+  let stdlib = read_input (open_in "stdlib.ark") in
+  let source = read_input !channel in
+  let linked_source = stdlib ^ source in
+  let lexbuf = Lexing.from_string linked_source in
+  let ast = Parser.program Scanner.tokenize lexbuf in
+  let sast = Semantics.check ast in
+  let codegen = Irgen.translate sast in
+  print_string (Llvm.string_of_llmodule codegen)

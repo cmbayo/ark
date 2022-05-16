@@ -1,0 +1,19 @@
+printbool {bool val}:
+  if (val):
+    printstring("true").
+  ... else:
+  printstring("false").
+  ...
+...
+
+power {int base, int exponent} -> int:
+  int result.
+  result = 1.
+
+  while (exponent > 0):
+    result = result * base.
+    exponent = exponent - 1.
+  ...
+  
+  return result.
+...
