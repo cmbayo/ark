@@ -4,7 +4,7 @@ open Sast
 
 module StringMap = Map.Make(String)
 
-let translate (globals, functions) =
+let translate (structs, (globals, functions)) =
   let context    = L.global_context () in
 
   let ark_module = L.create_module context "ark" in
@@ -76,6 +76,8 @@ let translate (globals, functions) =
       | SId s       -> L.build_load (lookup s) s builder
       | SAssign (s, e) -> let e' = build_expr builder e in
         ignore(L.build_store e' (lookup s) builder); e'
+      | SStructAssign (name, variables, e) -> let e' = build_expr builder e in 
+        ignore(L.build_store e' (lookup (name ^ ":" ^ variables)) builder); e'
       | SCall ("print", [e]) ->
         L.build_call printf_func [| int_format_str ; (build_expr builder e) |]
           "printf" builder

@@ -2,11 +2,11 @@
 
 %token PLUS MINUS TIMES DIVIDE POWER ASSIGN
 %token INT BOOL STRING
+%token STRUCT
 %token EQ NEQ LT GT LEQ GEQ AND OR
 %token <int> INT_LITERAL
 %token <bool> BOOL_LITERAL
 %token <string> ID STRING_LITERAL
-%token <string> ID
 %token IF ELSE WHILE
 %token LBRACE RBRACE LPAREN RPAREN
 %token ARROW COLON ELLIPSIS
@@ -28,7 +28,22 @@
 
 /* add function declarations*/
 program:
-  decls EOF { $1}
+  body EOF { $1}
+
+body:
+  structdecl_list decls   {($1, $2)}
+
+structdecl_list:
+  /* nothing */		              { []      }
+  | structdecl structdecl_list    { $1::$2  }
+
+structdecl:
+  STRUCT ID LBRACE vdecl_list RBRACE PERIOD {
+                {
+                  sname = $2;
+                  svariables = $4
+                }
+  }
 
 decls:
    /* nothing */ { ([], []) }
@@ -110,6 +125,7 @@ expr:
   | expr AND expr       { Binop ($1, And, $3)   }
   | expr OR expr        { Binop ($1, Or, $3)    }
   | ID ASSIGN expr   { Assign($1, $3) }
+  | ID COLON ID ASSIGN expr { StructAssign($1,$3,$5)  }
   | LPAREN expr RPAREN { $2                   }
   /* call */
   | ID LPAREN args_opt RPAREN { Call ($1, $3)  }

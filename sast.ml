@@ -1,6 +1,10 @@
 open Ast
-
+(*
+type sstruct_decl = SStructDecl of string * bind list
+*)
 type sexpr = typ * sx
+
+
 and sx =
   SBinop of sexpr * operator * sexpr
   | SIntLiteral of int
@@ -8,6 +12,7 @@ and sx =
   | SStringLiteral of string
   | SId of string
   | SAssign of string * sexpr
+  | SStructAssign of string * string * sexpr
   | SCall of string * sexpr list
 
 type sstmt =
@@ -26,4 +31,10 @@ type sfunc_def = {
   sbody: sstmt list;
 }
 
-type sprogram = bind list * sfunc_def list
+
+type sstruct_decl = {
+    ssname: string;
+    ssvariables: bind list;
+}
+
+type sprogram = sstruct_decl list *(bind list * sfunc_def list)

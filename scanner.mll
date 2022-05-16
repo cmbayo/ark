@@ -28,6 +28,7 @@ rule tokenize = parse
     | "else" { ELSE }
     | "while" { WHILE }
     | "def" { DEF }
+    | "struct" { STRUCT }
     | "input" { INPUT }
     | "output" { OUTPUT }
     | "return" { RETURN }

@@ -4,7 +4,8 @@ open Sast
 module StringMap = Map.Make(String)
 
 
-let check (globals, functions) =
+let check (structs, (globals, functions)) =
+  
 
   let check_binds (kind : string) (binds : (typ * string) list) =
     let rec dups = function
@@ -16,6 +17,38 @@ let check (globals, functions) =
   in
 
   check_binds "global" globals;
+
+  let built_in_structs = StringMap.empty
+
+  in
+
+  let add_struct smap sd = 
+          let sdup_err = "duplicate structure " ^ sd.sname
+          and smake_err er = raise (Failure er)
+          and m = sd.sname
+          in match sd with
+           _ when StringMap.mem m smap -> smake_err sdup_err
+         | _ -> StringMap.add m sd smap
+  in
+  let struct_decls = List.fold_left add_struct built_in_structs structs
+  in
+
+  (* let find_struct s =
+    try StringMap.find s struct_decls
+    with Not_found -> raise (Failure ("unrecognized struct " ^ s))
+  in *)
+
+  (* let find_struct_variable s var =
+    try StringMap.find s struct_decls
+    with Not_found -> raise (Failure ("unrecognized struct " ^ s))
+    s.svariables
+
+  in *)
+
+  let check_struct sd = 
+    check_binds "variables" sd.svariables;
+
+  in 
 
   let built_in_decls =
     StringMap.add "print" {
@@ -73,9 +106,19 @@ let check (globals, functions) =
         StringMap.empty (globals @ func.formals @ func.locals )
     in
 
+    (* Build local struct symbol table of variables for this function *)
+    let struct_symbols = List.fold_left 
+        (fun m s -> List.fold_left 
+                    (fun m (ty, name) -> StringMap.add (String.concat ":" [s.sname; name]) ty m)
+                    m
+                    s.svariables)
+        StringMap.empty 
+        structs
+    in
+
     (* Return a variable from our local symbol table *)
-    let type_of_identifier s =
-      try StringMap.find s symbols
+    let type_of_identifier s table =
+      try StringMap.find s table
       with Not_found -> raise (Failure ("undeclared identifier " ^ s))
     in
 
@@ -84,13 +127,20 @@ let check (globals, functions) =
         IntLiteral l -> (Int, SIntLiteral l)
       | BoolLiteral l -> (Bool, SBoolLiteral l)
       | StringLiteral l -> (String, SStringLiteral l)
-      | Id var -> (type_of_identifier var, SId var)
+      | Id var -> (type_of_identifier var symbols, SId var)
       | Assign(var, e) ->
-        let lt = type_of_identifier var
+        let lt = type_of_identifier var symbols
         and (rt, e') = check_expr e in
         let err = "illegal assignment" 
         in
         (check_assign lt rt err, SAssign(var, (rt, e')))
+      | StructAssign(structname, variablename, e) ->
+        let lt = type_of_identifier (structname ^ ":" ^ variablename) struct_symbols
+        and (rt, e') = check_expr e in
+        let err = "illegal assignment" 
+        in
+        (check_assign lt rt err, SStructAssign(structname, variablename, (rt, e')))
+
       | Binop(e1, op, e2) ->
         let (t1, e1') = check_expr e1
         and (t2, e2') = check_expr e2 in
@@ -147,5 +197,9 @@ let check (globals, functions) =
       slocals  = func.locals;
       sbody = check_stmt_list func.body
     }
+  
+  
+  
+
   in
-  (globals, List.map check_func functions)
+  (List.map check_struct structs, (globals, List.map check_func functions))

@@ -1,7 +1,11 @@
-type typ = Int | Bool | String
+type typ = Int | Bool | String | Struct of string
 type operator = Add | Subtract | Multiply | Divide | Power | Equal | Neq | Less | Greater | LessEqual | GreaterEqual | And | Or
-
-
+(* int x: name binding *)
+type bind = typ * string
+type struct_decl = {
+        sname: string;
+        svariables: bind list;
+}
 
 type expr = 
   | Binop of expr * operator * expr
@@ -10,6 +14,7 @@ type expr =
   | StringLiteral of string
   | Id of string
   | Assign of string * expr
+  | StructAssign of string * string * expr
   | Call of string * expr list
 
 type stmt =
@@ -19,8 +24,7 @@ type stmt =
   | While of expr * stmt list
   | Return of expr
 
-  (* int x: name binding *)
-type bind = typ * string
+
 
 
 (* func_def: ret_typ fname formals locals body *)
@@ -32,4 +36,5 @@ type func_def = {
   body: stmt list;
 }
 
-type program = bind list * func_def list
+
+type program = struct_decl list * (bind list * func_def list)
