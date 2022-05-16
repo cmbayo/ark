@@ -61,6 +61,16 @@ fdecl:
       body=$9
     }
   }
+  | ID LBRACE formals_opt RBRACE COLON vdecl_list stmt_list ELLIPSIS
+  {
+    {
+      rtyp=Int;
+      fname=$1;
+      formals=$3;
+      locals=$6;
+      body=$7
+    }
+  }
 
 /* formals_opt */
 formals_opt:
@@ -96,7 +106,7 @@ expr:
   | expr GT     expr { Binop($1, Greater,  $3)   }
   | expr TIMES expr { Binop ($1, Multiply, $3) }
   | expr DIVIDE expr { Binop ($1, Divide, $3) }
-  | expr POWER expr { Binop ($1, Power, $3)}
+  | expr POWER expr { Call ("power", [$1; $3])}
   | expr AND expr       { Binop ($1, And, $3)   }
   | expr OR expr        { Binop ($1, Or, $3)    }
   | ID ASSIGN expr   { Assign($1, $3) }

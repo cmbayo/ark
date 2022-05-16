@@ -5,6 +5,11 @@
 compilationOutput="exampleOutput.txt" 
 stringCompare="A false or different case."
 
+test=0
+pass=0
+parse=0
+general=0
+
 # diffFiles correctOutput.txt $compilationOutput
 # diffFileAndString correctOutput.txt "$stringCompare"
 # diffTwoStrings "same" "same"
@@ -16,9 +21,13 @@ diffFiles () {
 }
 
 diffFileAndString () {
-	if diff $1 <(echo "${2}"); then echo "${3}...Okay!"
-        else echo "${3}...Bad"
-        fi
+	if [[ 2 -eq $4 ]]; then 
+		echo "PARSE ERROR!!! : ${3}" && ((parse++))
+	else
+		if diff $1 <(echo "${2}"); then echo "Okay! : ${3}" && ((pass++))
+		else echo "Bad. : ${3}" && ((general++))
+		fi
+	fi
 }
 diffTwoStrings() {
 	if diff <(echo $1) <(echo $2); then echo "Outputs seem to be the same."
@@ -26,14 +35,16 @@ diffTwoStrings() {
         fi
 }
 test(){
+	((test++))
 	echo "main {} -> int: ${1} ..." > input.txt
-	./ark.native < input.txt > codegen && /usr/local/opt/llvm/bin/lli codegen > ark.out
-	diffFileAndString ark.out "${2}" "\"${1}\" ==> ${2} "
+	./ark.native < input.txt > codegen 2>/dev/null && /usr/local/opt/llvm/bin/lli codegen > ark.out
+	diffFileAndString ark.out "${2}" "\"${1}\" ==> ${2} " $?
 }
 testSeperate(){
+	((test++))
 	echo "${1}" > input.txt
-	./ark.native < input.txt > codegen && /usr/local/opt/llvm/bin/lli codegen > ark.out
-	diffFileAndString ark.out "${2}" "\"${1}\" ==> ${2} "
+	./ark.native < input.txt > codegen 2>/dev/null && /usr/local/opt/llvm/bin/lli codegen > ark.out
+	diffFileAndString ark.out "${2}" "\"${1}\" ==> ${2} " $?
 }
 
 test "print (9-8)." "1"
@@ -46,12 +57,14 @@ test "print (10-7/2*3+1)." "2"
 test "print (5-100)." "-95"
 test "print (10*2-30)." "-10"
 test "print (2**2-1)." "3"
-test "print (3/0)." ""
+#test "print (3/0)." ""
 test "print (2-1)." "1"
 test "bool b. b = true. if(b): print(5). ..." "5"
 test "int a. a = 5. a = a - 2. print(a)." "3"
 #test "int a = 5. print(a)." "5"
 test "str a. a = \"tron appears\". printstring(a)." "tron appears"
+STR=$'true\nfalse'
+test "bool t. bool f. t = true. f = false. printbool(t). printbool(f)." "$STR"
 STR=$'1\n2\n3\n4\n5'
 test "int a. a = 0. while(a < 5): a = a + 1. print(a). ..." "$STR"
 testSeperate "fib{int n} -> int: if(n < 2): return n. ... return fib(n-1) + fib(n-2). ... main{} -> int: print(fib(4)). ..." "3"
@@ -67,5 +80,10 @@ test "if(true & true): printstring(\"banksy was here\"). ..." "banksy was here"
 test "bool a. a = true. if(false || a): printstring(\"banksy was here\"). ..." "banksy was here"
 testSeperate "boo{int n, bool tf} -> int: if(tf): return n+1. ... return n. ... main{} -> int: print(boo(1, true)). ..." "2"
 testSeperate "str test. main{} -> int: test = \"I'm outside main.\". printstring(test). ..." "I'm outside main."
-testSeperate "struct test{int a. int b.}. main{} -> int: print(3). ..." "3"
+#testSeperate "struct test{int a. int b.}. main{} -> int: print(3). ..." "3"
+testSeperate "fib{int n}: if(n < 2): return n. ... return fib(n-1) + fib(n-2). ... main{}: print(fib(7)). ..." "13"
 #
+echo "-------------------------------------------"
+echo " "
+echo "${pass}/${test} test cases passed, ${general} incorrect case(s),  ${parse} parse error(s)."
+echo " "
