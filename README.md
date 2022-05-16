@@ -38,6 +38,17 @@ main {} -> int:
         printstring(foo(1, false, "hello world!")).
 ...
 ```
+## Struct Declaration
+Structs need to be declared and assigned seperately. Declaration can happen in 
+global variable section however assignments need to happen within a function:
+
+```
+struct struct_name {
+	int a.
+	int b.
+}.
+```
+
 
 ## Standard Library
 `print`: prints an integer
