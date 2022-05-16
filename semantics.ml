@@ -128,7 +128,7 @@ let check (structs, (globals, functions)) =
       | BoolLiteral l -> (Bool, SBoolLiteral l)
       | StringLiteral l -> (String, SStringLiteral l)
       | Id var -> (type_of_identifier var symbols, SId var)
-      | Assign(var, e) as ex ->
+      | Assign(var, e) ->
         let lt = type_of_identifier var symbols
         and (rt, e') = check_expr e in
         let err = "illegal assignment" 
@@ -140,12 +140,9 @@ let check (structs, (globals, functions)) =
         let err = "illegal assignment" 
         in
         (check_assign lt rt err, SStructAssign(structname, variablename, (rt, e')))
-
-      | Binop(e1, op, e2) as e ->
+      | Binop(e1, op, e2) ->
         let (t1, e1') = check_expr e1
         and (t2, e2') = check_expr e2 in
-        let err = "illegal binary operator "
-        in
         if t1 = t2 then
           let t = match op with
               Add | Subtract | Multiply | Divide | Power when t1 = Int -> Int
@@ -156,7 +153,7 @@ let check (structs, (globals, functions)) =
           in
           (t, SBinop((t1, e1'), op, (t2, e2')))
         else raise (Failure "Fatal error.") 
-      | Call(fname, args) as call ->
+      | Call(fname, args) ->
         let fd = find_func fname in
         let param_length = List.length fd.formals in
         if List.length args != param_length then
